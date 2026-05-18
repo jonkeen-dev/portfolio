@@ -1,71 +1,36 @@
-# portfolio
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Claude is assisting with planning, ideas are original to me.
+## Getting Started
 
+First, run the development server:
 
-Folder/File Structure
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-jonkeen.dev/
-├── app/                   # Next.js App Router pages
-│   ├── page.tsx           # Home
-│   ├── projects/
-│   ├── writing/
-│   ├── about/
-│   └── layout.tsx
-├── components/
-│   ├── ui/                # shadcn/ui components live here
-│   └── [custom]/          # Your own components
-├── content/
-│   ├── projects/          # MDX files — one per project case study
-│   └── writing/           # MDX files — your technical posts
-├── lib/                   # Utility functions, MDX helpers
-├── public/                # Static assets, resume PDF
-├── styles/
-└── README.md              # Don't neglect this — it's part of the portfolio
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Refined Phase Plan
-Your original phases were solid. Here's a version with tighter scope so each phase has a clear "done" state:
-Phase 1 — Skeleton (Do this first, deploy immediately)
-Goal: Live site on Vercel before any real content exists.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-Next.js + TS + Tailwind + shadcn/ui initialized
-Nav, footer, placeholder pages
-Dark/light mode toggle working
-Pushed to GitHub → auto-deployed to Vercel
-Custom domain connected via Cloudflare
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-Phase 2 — Core Content
-Goal: A recruiter or curious person can get the full picture.
+## Learn More
 
-Hero section with positioning statement
-2–3 project case studies (use the full structure: problem → constraints → decisions → results → learned)
-About page
-Resume as downloadable PDF
-Contact (simple mailto: link is fine to start)
+To learn more about Next.js, take a look at the following resources:
 
-Phase 3 — Writing System
-Goal: First technical post is live.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-MDX pipeline set up
-/writing page with post listing
-Tags working
-Syntax highlighting
-First post published (suggestion: "Moving From Process Analysis to Software Development" — that's your story, write it first)
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-Phase 4 — Polish
-Goal: The site feels as good as it looks.
+## Deploy on Vercel
 
-Framer Motion on page transitions and card hovers
-Typography tightened up
-OG images for social sharing
-SEO meta tags
-Lighthouse audit — aim for green across the board
-Mobile tested on real device
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Phase 5 — Production App (Future, No Deadline)
-Goal: The portfolio becomes something you could demo as a project itself.
-
-Supabase integration
-Contact form with DB storage
-Admin view (private) — see who's visiting what
-Possibly: project view counter, newsletter, or CMS for writing
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
