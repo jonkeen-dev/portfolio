@@ -49,7 +49,7 @@ export default function Nav() {
             rel="noopener noreferrer"
             className="text-accent-bright border-accent-bright/30 hover:bg-accent-bright/10 rounded-md border px-3 py-1.5 text-xs transition-colors"
           >
-            Resume ↗
+            Resume
           </a>
 
           <button
