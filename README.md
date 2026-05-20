@@ -1,70 +1,39 @@
-# portfolio
+# jonkeen.dev
 
-Claude is assisting with planning, ideas are original to me.
+My personal portfolio and writing site to document my projects and learnings as I weave through this incredible maze.
 
-Folder/File Structure
+## Design philosophy
 
-jonkeen.dev/
-├── app/ # Next.js App Router pages
-│ ├── page.tsx # Home
-│ ├── projects/
-│ ├── writing/
-│ ├── about/
-│ └── layout.tsx
+Minimal, content-first, quietly considered. Type and whitespace do the work; motion and color are accents, not decoration. The site should load instantly, read cleanly in either theme, and stay out of the way of the work it presents.
+
+## Stack
+
+- **Framework:** Next.js 16 (App Router) · React 19 · TypeScript
+- **Styling:** Tailwind CSS v4 · shadcn/ui · `next-themes`
+- **Motion:** Framer Motion
+- **Tooling:** ESLint · Prettier
+- **Hosting:** Vercel · Cloudflare DNS
+
+## Structure
+
+```
+portfolio/
+├── app/              # Next.js App Router (pages, layout, not-found)
 ├── components/
-│ ├── ui/ # shadcn/ui components live here
-│ └── [custom]/ # Your own components
+│   ├── layout/       # Nav, footer, shell pieces
+│   ├── sections/     # Page-level composed sections
+│   └── ui/           # shadcn/ui primitives
 ├── content/
-│ ├── projects/ # MDX files — one per project case study
-│ └── writing/ # MDX files — your technical posts
-├── lib/ # Utility functions, MDX helpers
-├── public/ # Static assets, resume PDF
-├── styles/
-└── README.md # Don't neglect this — it's part of the portfolio
+│   └── projects/     # Project case studies
+├── lib/              # Utilities, data helpers
+├── public/           # Static assets
+└── docs/             # Working notes (gitignored)
+```
 
-Refined Phase Plan
-Your original phases were solid. Here's a version with tighter scope so each phase has a clear "done" state:
-Phase 1 — Skeleton (Do this first, deploy immediately)
-Goal: Live site on Vercel before any real content exists.
+## Status
 
-Next.js + TS + Tailwind + shadcn/ui initialized
-Nav, footer, placeholder pages
-Dark/light mode toggle working
-Pushed to GitHub → auto-deployed to Vercel
-Custom domain connected via Cloudflare
+Active early-stage build.
 
-Phase 2 — Core Content
-Goal: A recruiter or curious person can get the full picture.
+## Credits
 
-Hero section with positioning statement
-2–3 project case studies (use the full structure: problem → constraints → decisions → results → learned)
-About page
-Resume as downloadable PDF
-Contact (simple mailto: link is fine to start)
-
-Phase 3 — Writing System
-Goal: First technical post is live.
-
-MDX pipeline set up
-/writing page with post listing
-Tags working
-Syntax highlighting
-First post published (suggestion: "Moving From Process Analysis to Software Development" — that's your story, write it first)
-
-Phase 4 — Polish
-Goal: The site feels as good as it looks.
-
-Framer Motion on page transitions and card hovers
-Typography tightened up
-OG images for social sharing
-SEO meta tags
-Lighthouse audit — aim for green across the board
-Mobile tested on real device
-
-Phase 5 — Production App (Future, No Deadline)
-Goal: The portfolio becomes something you could demo as a project itself.
-
-Supabase integration
-Contact form with DB storage
-Admin view (private) — see who's visiting what
-Possibly: project view counter, newsletter, or CMS for writing
+Built by Jon Keen. Planning and pair-programming assistance from Claude; ideas, decisions, and writing are original.
