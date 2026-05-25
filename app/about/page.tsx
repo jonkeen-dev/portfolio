@@ -74,7 +74,7 @@ export default function AboutPage() {
             <LinkedInIcon size={20} />
           </a>
           <a
-            href="https://github.com/0xStatiK"
+            href="https://github.com/jonkeen-dev"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"

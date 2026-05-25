@@ -5,7 +5,7 @@ import LinkedInIcon from "@/components/icons/linkedin-icon";
 
 const links = [
   {
-    href: "https://github.com/0xStatiK",
+    href: "https://github.com/jonkeen-dev",
     label: "GitHub",
     icon: SiGithub,
   },
