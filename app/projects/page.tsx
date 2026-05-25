@@ -24,10 +24,20 @@ export default function ProjectsPage() {
             <li key={project.slug}>
               <Link
                 href={`/projects/${project.slug}`}
-                className="border-border/15 hover:border-border/40 block rounded-lg border p-6 transition-colors"
+                className="border-border/15 hover:border-border/40 focus-visible:ring-accent/50 block rounded-lg border p-6 transition-colors focus-visible:ring-2 focus-visible:outline-none"
               >
                 <h2 className="text-foreground text-lg font-medium">{project.title}</h2>
                 <p className="text-foreground-secondary mt-2 text-sm">{project.summary}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {project.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="border-border/15 text-foreground-muted rounded-full border px-2.5 py-0.5 text-xs"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </Link>
             </li>
           ))}
