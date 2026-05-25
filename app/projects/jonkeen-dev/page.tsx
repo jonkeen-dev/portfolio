@@ -3,10 +3,10 @@ import Link from "next/link";
 
 import { projects } from "@/lib/projects";
 
-const project = projects.find((p) => p.slug === "palletforge")!;
+const project = projects.find((p) => p.slug === "jonkeen-dev")!;
 
 export const metadata: Metadata = {
-  title: "PalletForge — jonkeen.dev",
+  title: "jonkeen.dev — jonkeen.dev",
   description: project.summary,
 };
 
@@ -18,7 +18,7 @@ const sections = [
   { heading: "What I learned", content: project.learned },
 ];
 
-export default function PalletForgePage() {
+export default function JonkeenDevPage() {
   return (
     <section className="mx-auto max-w-3xl px-6 pt-32 pb-16">
       <Link

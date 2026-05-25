@@ -16,7 +16,7 @@ Minimal, content-first, quietly considered. Type and whitespace do the work; mot
 
 ## Structure
 
-```
+```text
 portfolio/
 ├── app/              # Next.js App Router (pages, layout, not-found)
 ├── components/
