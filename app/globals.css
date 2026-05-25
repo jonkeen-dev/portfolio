@@ -26,11 +26,11 @@
   --background: #f8f7f5;
   --background-secondary: #eeecea;
   --foreground: #1a1a1a;
-  --foreground-secondary: #4a4a5a;
-  --foreground-muted: #888894;
+  --foreground-secondary: #3d3d4e;
+  --foreground-muted: #555564;
   --accent: #4f46e5;
-  --accent-bright: #818cf8;
-  --border: #6366f1;
+  --accent-bright: #4338ca;
+  --border: #1e1e2e;
 }
 
 /* Dark mode */
