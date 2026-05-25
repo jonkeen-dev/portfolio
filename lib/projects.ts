@@ -43,7 +43,7 @@ export const projects: Project[] = [
       "The @theme inline directive in Tailwind v4 is load-bearing. Plain @theme freezes variable values at build time, which silently breaks runtime theme switching. Next.js 16 genuinely requires reading the source documentation before writing code; assumptions from earlier versions led to subtle bugs. Semantic color tokens scale much better than sprinkling dark: variants across components. And where you place ThemeProvider in the render tree determines what themes and what doesn't — anything outside it renders un-themed, which caught me on the 404 page until I restructured the layout.",
     links: [
       { label: "Live site", href: "https://jonkeen.dev" },
-      { label: "GitHub", href: "https://github.com/0xStatiK/portfolio" },
+      { label: "GitHub", href: "https://github.com/jonkeen-dev/portfolio" },
     ],
   },
   {
@@ -62,6 +62,6 @@ export const projects: Project[] = [
       "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.",
     learned:
       "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.",
-    links: [{ label: "GitHub", href: "https://github.com/0xStatiK/palletforge" }],
+    links: [{ label: "GitHub", href: "https://github.com/jonkeen-dev/palletforge" }],
   },
 ];
