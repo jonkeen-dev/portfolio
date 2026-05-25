@@ -51,7 +51,6 @@ export default function Nav() {
           >
             Resume
           </a>
-
           <button
             onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
             aria-label="Toggle theme"
