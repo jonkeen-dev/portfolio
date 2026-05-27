@@ -1,8 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+
+const MotionLink = motion.create(Link);
+const navSpring = { type: "spring" as const, stiffness: 500, damping: 30 };
 
 export default function Nav() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -30,34 +34,46 @@ export default function Nav() {
             jonkeen.dev
           </Link>
           <nav className="hidden items-center gap-7 md:flex">
-            <Link
+            <MotionLink
               href="/projects"
               className="text-foreground-secondary hover:text-foreground text-sm transition-colors"
+              whileHover={{ scale: 1.2, y:-1 }}
+              whileFocus={{ scale: 1.2, y:-1 }}
+              transition={navSpring}
             >
               Projects
-            </Link>
-            <Link
+            </MotionLink>
+            <MotionLink
               href="/about"
               className="text-foreground-secondary hover:text-foreground text-sm transition-colors"
+              whileHover={{ scale: 1.2, y:-1 }}
+              whileFocus={{ scale: 1.2, y:-1 }}
+              transition={navSpring}
             >
               About
-            </Link>
-            <Link
+            </MotionLink>
+            <MotionLink
               href="/roadmap"
               className="text-foreground-secondary hover:text-foreground text-sm transition-colors"
+              whileHover={{ scale: 1.2, y:-1 }}
+              whileFocus={{ scale: 1.2, y:-1 }}
+              transition={navSpring}
             >
               Roadmap
-            </Link>
+            </MotionLink>
           </nav>
           <div className="flex items-center gap-3">
-            <a
+            <motion.a
               href="/resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent-bright border-accent-bright/30 hover:bg-accent-bright/10 hidden rounded-md border px-3 py-1.5 text-xs transition-colors sm:inline-flex"
+              whileHover={{ scale: 1.1, y: -1 }}
+              whileFocus={{ scale: 1.1, y: -1 }}
+              transition={navSpring}
             >
               Resume
-            </a>
+            </motion.a>
             <button
               onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
               aria-label="Toggle theme"
@@ -73,32 +89,44 @@ export default function Nav() {
 
         {/* Row 2: Mobile nav links */}
         <nav className="flex items-center gap-5 pb-2 md:hidden">
-          <Link
+          <MotionLink
             href="/projects"
             className="text-foreground-secondary hover:text-foreground text-sm transition-colors"
+            whileHover={{ y: -1 }}
+            whileFocus={{ y: -1 }}
+            transition={navSpring}
           >
             Projects
-          </Link>
-          <Link
+          </MotionLink>
+          <MotionLink
             href="/about"
             className="text-foreground-secondary hover:text-foreground text-sm transition-colors"
+            whileHover={{ y: -1 }}
+            whileFocus={{ y: -1 }}
+            transition={navSpring}
           >
             About
-          </Link>
-          <Link
+          </MotionLink>
+          <MotionLink
             href="/roadmap"
             className="text-foreground-secondary hover:text-foreground text-sm transition-colors"
+            whileHover={{ y: -1 }}
+            whileFocus={{ y: -1 }}
+            transition={navSpring}
           >
             Roadmap
-          </Link>
-          <a
+          </MotionLink>
+          <motion.a
             href="/resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground-secondary hover:text-foreground text-sm transition-colors sm:hidden"
+            whileHover={{ y: -1 }}
+            whileFocus={{ y: -1 }}
+            transition={navSpring}
           >
             Resume
-          </a>
+          </motion.a>
         </nav>
       </div>
     </header>

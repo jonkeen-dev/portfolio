@@ -1,5 +1,5 @@
-import Link from "next/link";
-
+import MotionButtonLink from "@/components/motion/motion-button-link";
+import MotionCardLink from "@/components/motion/motion-card-link";
 import { projects } from "@/lib/projects";
 
 const featured = projects.slice(0, 2);
@@ -17,18 +17,18 @@ export default function Home() {
           asking why first.
         </p>
         <div className="mt-8 flex gap-4">
-          <Link
+          <MotionButtonLink
             href="/projects"
             className="bg-accent-bright text-background rounded-md px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-85"
           >
             See projects
-          </Link>
-          <Link
+          </MotionButtonLink>
+          <MotionButtonLink
             href="/about"
             className="text-accent-bright border-accent-bright/30 hover:bg-accent-bright/10 rounded-md border px-5 py-2.5 text-sm font-medium transition-colors"
           >
             About
-          </Link>
+          </MotionButtonLink>
         </div>
       </section>
 
@@ -37,7 +37,7 @@ export default function Home() {
         <ul className="mt-6 grid gap-6 sm:grid-cols-2">
           {featured.map((project) => (
             <li key={project.slug}>
-              <Link
+              <MotionCardLink
                 href={`/projects/${project.slug}`}
                 className="border-border/30 hover:border-border/50 focus-visible:ring-accent/50 block rounded-lg border p-6 transition-colors focus-visible:ring-2 focus-visible:outline-none"
               >
@@ -53,7 +53,7 @@ export default function Home() {
                     </span>
                   ))}
                 </div>
-              </Link>
+              </MotionCardLink>
             </li>
           ))}
         </ul>

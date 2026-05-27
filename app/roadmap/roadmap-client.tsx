@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 
 import { projects } from "@/lib/projects";
@@ -124,9 +125,11 @@ export default function RoadmapClient() {
       ) : (
         <ul className="mt-8 grid gap-4 sm:grid-cols-2">
           {filteredItems.map((item) => (
-            <li
+            <motion.li
               key={`${item.project}-${item.title}`}
               className="border-border/30 rounded-lg border p-6"
+              whileHover={{ y: -2 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
             >
               <div className="flex items-center gap-2">
                 <span
@@ -137,7 +140,7 @@ export default function RoadmapClient() {
               <h3 className="text-foreground mt-3 text-lg font-medium">{item.title}</h3>
               <p className="text-foreground-muted mt-1 text-xs">{projectMap.get(item.project)}</p>
               <p className="text-foreground-secondary mt-2 text-sm">{item.summary}</p>
-            </li>
+            </motion.li>
           ))}
         </ul>
       )}

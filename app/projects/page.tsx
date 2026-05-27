@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
+import MotionCardLink from "@/components/motion/motion-card-link";
 import { projects } from "@/lib/projects";
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export default function ProjectsPage() {
         <ul className="mt-12 grid gap-6 sm:grid-cols-2">
           {projects.map((project) => (
             <li key={project.slug}>
-              <Link
+              <MotionCardLink
                 href={`/projects/${project.slug}`}
                 className="border-border/30 hover:border-border/50 focus-visible:ring-accent/50 block rounded-lg border p-6 transition-colors focus-visible:ring-2 focus-visible:outline-none"
               >
@@ -38,7 +38,7 @@ export default function ProjectsPage() {
                     </span>
                   ))}
                 </div>
-              </Link>
+              </MotionCardLink>
             </li>
           ))}
         </ul>

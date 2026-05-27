@@ -47,8 +47,8 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "palletforge",
-    title: "PalletForge",
+    slug: "paletteforge",
+    title: "PaletteForge",
     summary:
       "A Warhammer 40k miniature painting webapp that assists with planning and suggesting various colors used during your painting journey.",
     tags: ["React", "TypeScript", "Node.js", "PostgreSQL", "Tailwind CSS"],
@@ -62,6 +62,6 @@ export const projects: Project[] = [
       "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.",
     learned:
       "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.",
-    links: [{ label: "GitHub", href: "https://github.com/jonkeen-dev/palletforge" }],
+    links: [{ label: "GitHub", href: "https://github.com/jonkeen-dev/PaletteForge" }],
   },
 ];

@@ -2,6 +2,7 @@ import { SiGithub } from "@icons-pack/react-simple-icons";
 import { Mail } from "lucide-react";
 
 import LinkedInIcon from "@/components/icons/linkedin-icon";
+import MotionIconLink from "@/components/motion/motion-icon-link";
 
 const links = [
   {
@@ -27,7 +28,7 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-6 py-8">
         <nav aria-label="Contact links" className="flex justify-center gap-6">
           {links.map(({ href, label, icon: Icon }) => (
-            <a
+            <MotionIconLink
               key={label}
               href={href}
               aria-label={label}
@@ -36,7 +37,7 @@ export default function Footer() {
               className="text-foreground-muted hover:text-foreground transition-colors"
             >
               <Icon size={20} />
-            </a>
+            </MotionIconLink>
           ))}
         </nav>
       </div>
