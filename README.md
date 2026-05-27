@@ -1,10 +1,10 @@
 # jonkeen.dev
 
-My personal portfolio and writing site to document my projects and learnings as I weave through this incredible maze.
+My personal portfolio and writing site to document my projects and learnings as I navigate things.
 
 ## Design philosophy
 
-Minimal, content-first, quietly considered. Type and whitespace do the work; motion and color are accents, not decoration. The site should load instantly, read cleanly in either theme, and stay out of the way of the work it presents.
+Minimal and beautiful.
 
 ## Stack
 
@@ -36,4 +36,4 @@ Active early-stage build.
 
 ## Credits
 
-Built by Jon Keen. Planning and pair-programming assistance from Claude; ideas, decisions, and writing are original.
+Built by Jon Keen. Planning and pair-programming assistance from Claude.
