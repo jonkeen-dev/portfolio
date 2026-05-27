@@ -60,7 +60,7 @@
 
 @layer base {
   html {
-    font-size: 118.75%;
+    font-size: clamp(118.75%, 112% + 0.25vw, 131.25%);
   }
 
   body {

@@ -74,7 +74,7 @@ export default function RoadmapClient() {
                 className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors ${
                   active
                     ? "bg-accent/15 text-foreground border-accent/30"
-                    : "border-border/15 text-foreground-muted hover:border-border/40"
+                    : "border-border/30 text-foreground-muted hover:border-border/50"
                 }`}
               >
                 <span className={`inline-block h-2 w-2 rounded-full ${statusColors[status]}`} />
@@ -97,7 +97,7 @@ export default function RoadmapClient() {
                 className={`rounded-full border px-3 py-1 text-xs transition-colors ${
                   active
                     ? "bg-accent/15 text-foreground border-accent/30"
-                    : "border-border/15 text-foreground-muted hover:border-border/40"
+                    : "border-border/30 text-foreground-muted hover:border-border/50"
                 }`}
               >
                 {projectMap.get(slug)}
@@ -111,7 +111,7 @@ export default function RoadmapClient() {
           <span className="text-foreground-muted text-xs tracking-wide uppercase">Sort</span>
           <button
             onClick={() => setSortDirection((d) => (d === "newest" ? "oldest" : "newest"))}
-            className="border-border/15 text-foreground-muted hover:border-border/40 rounded-full border px-3 py-1 text-xs transition-colors"
+            className="border-border/30 text-foreground-muted hover:border-border/50 rounded-full border px-3 py-1 text-xs transition-colors"
           >
             {sortDirection === "newest" ? "Newest first" : "Oldest first"}
           </button>
@@ -126,7 +126,7 @@ export default function RoadmapClient() {
           {filteredItems.map((item) => (
             <li
               key={`${item.project}-${item.title}`}
-              className="border-border/15 rounded-lg border p-6"
+              className="border-border/30 rounded-lg border p-6"
             >
               <div className="flex items-center gap-2">
                 <span

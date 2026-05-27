@@ -35,7 +35,7 @@ export default function PalletForgePage() {
         {project.tags.map((tag) => (
           <span
             key={tag}
-            className="border-border/15 text-foreground-muted rounded-full border px-3 py-1 text-xs"
+            className="border-border/30 text-foreground-muted rounded-full border px-3 py-1 text-xs"
           >
             {tag}
           </span>
