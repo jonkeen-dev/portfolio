@@ -17,6 +17,11 @@
   --color-accent-bright: var(--accent-bright);
   --color-border: var(--border);
 
+  --color-status-exploring: var(--status-exploring);
+  --color-status-planned: var(--status-planned);
+  --color-status-in-progress: var(--status-in-progress);
+  --color-status-done: var(--status-done);
+
   --font-sans: var(--font-geist-sans), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 }
@@ -31,6 +36,10 @@
   --accent: #4f46e5;
   --accent-bright: #4338ca;
   --border: #1e1e2e;
+  --status-exploring: #b45309;
+  --status-planned: #2563eb;
+  --status-in-progress: #16a34a;
+  --status-done: #6b7280;
 }
 
 /* Dark mode */
@@ -43,6 +52,10 @@
   --accent: #0891b2;
   --accent-bright: #22d3ee;
   --border: #0891b2;
+  --status-exploring: #fbbf24;
+  --status-planned: #60a5fa;
+  --status-in-progress: #4ade80;
+  --status-done: #6b7280;
 }
 
 @layer base {

@@ -40,7 +40,12 @@ export default function Nav() {
           >
             About
           </Link>
-          <span className="text-foreground-muted text-sm select-none">Writing</span>
+          <Link
+            href="/roadmap"
+            className="text-foreground-secondary hover:text-foreground text-sm transition-colors"
+          >
+            Roadmap
+          </Link>
         </nav>
         <div className="flex items-center gap-3">
           <a

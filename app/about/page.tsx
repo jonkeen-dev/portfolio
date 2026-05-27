@@ -18,8 +18,8 @@ export default function AboutPage() {
         <h2 className="text-foreground text-xl font-medium">Now</h2>
         <p className="text-foreground-secondary mt-3 text-base leading-relaxed">
           Father, husband of almost 15 years, full-time student, and full-time employee. Outside of
-          work and classes I&apos;m building this portfolio from scratch as a way to learn by doing —
-          every page here is a decision I had to make and defend. Whatever time is left goes to
+          work and classes I&apos;m building this portfolio from scratch as a way to learn by doing
+          — every page here is a decision I had to make and defend. Whatever time is left goes to
           family.
         </p>
       </div>
