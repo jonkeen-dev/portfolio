@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Providers from "@/components/providers";
 import Nav from "@/components/layout/nav";
 import Footer from "@/components/layout/footer";
+import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
@@ -37,6 +38,7 @@ export default function RootLayout({
           <Nav />
           <main className="flex-1">{children}</main>
           <Footer />
+          <Analytics />
           <SpeedInsights />
         </Providers>
       </body>
