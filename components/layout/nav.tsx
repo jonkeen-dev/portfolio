@@ -37,8 +37,8 @@ export default function Nav() {
             <MotionLink
               href="/projects"
               className="text-foreground-secondary hover:text-foreground text-sm transition-colors"
-              whileHover={{ scale: 1.2, y:-1 }}
-              whileFocus={{ scale: 1.2, y:-1 }}
+              whileHover={{ scale: 1.2, y: -1 }}
+              whileFocus={{ scale: 1.2, y: -1 }}
               transition={navSpring}
             >
               Projects
@@ -46,8 +46,8 @@ export default function Nav() {
             <MotionLink
               href="/about"
               className="text-foreground-secondary hover:text-foreground text-sm transition-colors"
-              whileHover={{ scale: 1.2, y:-1 }}
-              whileFocus={{ scale: 1.2, y:-1 }}
+              whileHover={{ scale: 1.2, y: -1 }}
+              whileFocus={{ scale: 1.2, y: -1 }}
               transition={navSpring}
             >
               About
@@ -55,8 +55,8 @@ export default function Nav() {
             <MotionLink
               href="/roadmap"
               className="text-foreground-secondary hover:text-foreground text-sm transition-colors"
-              whileHover={{ scale: 1.2, y:-1 }}
-              whileFocus={{ scale: 1.2, y:-1 }}
+              whileHover={{ scale: 1.2, y: -1 }}
+              whileFocus={{ scale: 1.2, y: -1 }}
               transition={navSpring}
             >
               Roadmap

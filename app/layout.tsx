@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Providers from "@/components/providers";
 import Nav from "@/components/layout/nav";
 import Footer from "@/components/layout/footer";
+import PageTransition from "@/components/motion/page-transition";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
@@ -18,8 +19,36 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "jonkeen.dev",
-  description: "Jon Keen - software engineer.",
+  title: {
+    default: "jonkeen.dev",
+    template: "%s — jonkeen.dev",
+  },
+  description:
+    "Jon Keen — A software engineer with twenty years of retail experience and an analyst's habit of asking why first.",
+  metadataBase: new URL("https://jonkeen.dev"),
+  icons: {
+    icon: "/favicon.ico",
+  },
+  openGraph: {
+    title: "jonkeen.dev",
+    description:
+      "Jon Keen — A software engineer with twenty years of retail experience and an analyst's habit of asking why first.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "jonkeen.dev — Jon Keen, Software Engineer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "jonkeen.dev",
+    description:
+      "Jon Keen — A software engineer with twenty years of retail experience and an analyst's habit of asking why first.",
+    images: ["/opengraph-image"],
+  },
 };
 
 export default function RootLayout({
@@ -36,7 +65,9 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col">
         <Providers>
           <Nav />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1">
+            <PageTransition>{children}</PageTransition>
+          </main>
           <Footer />
           <Analytics />
           <SpeedInsights />

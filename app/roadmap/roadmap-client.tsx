@@ -137,7 +137,7 @@ export default function RoadmapClient() {
                 />
                 <span className="text-foreground-muted text-xs">{item.status}</span>
               </div>
-              <h3 className="text-foreground mt-3 text-lg font-medium">{item.title}</h3>
+              <h3 className="card-title mt-3">{item.title}</h3>
               <p className="text-foreground-muted mt-1 text-xs">{projectMap.get(item.project)}</p>
               <p className="text-foreground-secondary mt-2 text-sm">{item.summary}</p>
             </motion.li>
