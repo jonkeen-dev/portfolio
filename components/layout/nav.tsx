@@ -77,11 +77,11 @@ export default function Nav() {
             <button
               onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
               aria-label="Toggle theme"
-              className="bg-accent/25 relative flex h-[18px] w-8 items-center rounded-full px-0.5 transition-colors"
+              className="bg-accent/25 relative flex h-4.5 w-8 items-center rounded-full px-0.5 transition-colors"
             >
               <span
                 suppressHydrationWarning
-                className="bg-accent-bright h-3.5 w-3.5 translate-x-[14px] rounded-full transition-transform duration-300 dark:translate-x-0"
+                className="bg-accent-bright h-3.5 w-3.5 translate-x-3.5 rounded-full transition-transform duration-300 dark:translate-x-0"
               />
             </button>
           </div>
