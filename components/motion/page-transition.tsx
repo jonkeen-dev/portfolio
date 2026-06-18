@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 /**
  * PageTransition
  * Thin client wrapper, provides restrained, purposeful page enter animation across the site.
- * 
+ *
  * Applied once in root layout so all routes (incl. 404) inherit automatically.
  * No per-page changes required.
  */

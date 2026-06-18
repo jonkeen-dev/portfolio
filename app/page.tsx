@@ -7,7 +7,9 @@ const featured = projects.slice(0, 2);
 export default function Home() {
   return (
     <>
-      <section className="mx-auto max-w-3xl px-6 pt-32 pb-16">
+      <section className="relative mx-auto max-w-3xl px-6 pt-32 pb-16">
+        {/* Subtle hero glow — the single allowed decorative element (per design philosophy) */}
+        <div aria-hidden="true" className="hero-glow" />
         <p className="text-accent-bright font-mono text-sm">Software Engineer</p>
         <h1 className="page-h1-hero">Jon Keen</h1>
         <p className="prose-body mt-6 max-w-xl text-lg">

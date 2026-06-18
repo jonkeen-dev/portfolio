@@ -18,9 +18,9 @@ export default function AboutPage() {
       <div className="mt-12">
         <h2 className="section-h2">Now</h2>
         <p className="prose-body mt-3">
-          Father, husband of almost 15 years, full-time student, and full-time employee. Outside of
-          work and classes I&apos;m building this portfolio from scratch as a way to learn by doing
-          — every page here is a decision I had to make and defend. Whatever time is left goes to
+          I&apos;m a father and husband of almost 15 years, a full-time student, and a full-time
+          employee. Outside of work and classes, I&apos;m building this portfolio from scratch to
+          learn by doing. Every page is a decision I made and stood by. The rest of my time goes to
           family.
         </p>
       </div>
@@ -28,27 +28,33 @@ export default function AboutPage() {
       <div className="mt-12">
         <h2 className="section-h2">Background</h2>
         <p className="prose-body mt-3">
-          I spent 18 years in retail operations. I started in stock positions, moved into fresh
-          produce, and worked my way up to Produce Manager. From there I entered a 52-week Store
-          Manager Trainee program — a rotation through every operational role in the building. That
-          led to Food Service Manager, where I ran a kitchen, bakery, cafe, and catering operation
-          alongside the retail sales floor for the department. I moved into Assistant Store Manager
-          and eventually transitioned into a Business Analyst role, where I spent two years bridging
-          the gap between business needs and technical systems.
+          I spent 18 years working in retail operations. I began in stock roles, moved into fresh
+          produce, and became a Produce Manager. After that I joined a year-long Store Manager
+          training program that rotated me through every job in the store. I later ran a large food
+          service operation (kitchen, bakery, cafe, catering) as Food Service Manager. From there I
+          became an Assistant Store Manager and then spent two years as a Business Analyst,
+          connecting business needs with the systems that support them.
         </p>
         <p className="prose-body mt-3">
-          The through-line across all of it: figuring out how systems actually work, then making
-          them work better. That instinct is what pulled me toward software engineering — I got
-          tired of translating requirements and wanted to build the solutions myself.
+          The common thread was always the same: I wanted to understand how things actually worked
+          and then make them better. That is what led me to software engineering. I got tired of
+          just explaining what the business needed and decided to build the solutions myself.
         </p>
+
+        {/* Compact journey milestones */}
+        <ul className="prose-body mt-3 list-disc pl-5 text-sm">
+          <li>18 years in retail operations, rising to Produce Manager and Food Service Manager</li>
+          <li>2 years as a Business Analyst linking business goals and technical systems</li>
+          <li>Now building real software (Next.js, React, and SQL-heavy projects)</li>
+        </ul>
       </div>
 
       <div className="mt-12">
         <h2 className="section-h2">Currently learning</h2>
         <p className="prose-body mt-3">
-          My focus right now is JavaScript, TypeScript, and React — building real things to deepen
-          what I&apos;m learning in class. I&apos;m also looking to get stronger with SQL and
-          database management, and I&apos;m planning a project specifically around that.
+          Right now I&apos;m focused on JavaScript, TypeScript, and React by building real projects
+          that go beyond what I learn in class. I also want to get much stronger with SQL and
+          databases, and I&apos;m working on a project in that area.
         </p>
       </div>
 

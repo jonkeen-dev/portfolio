@@ -50,8 +50,7 @@ export const roadmap: RoadmapItem[] = [
   },
   {
     title: "Page transitions",
-    summary:
-      "Add Framer Motion page transition animations between routes.",
+    summary: "Add Framer Motion page transition animations between routes.",
     project: "jonkeen-dev",
     status: "Done",
     dateAdded: "2026-05-20",
@@ -71,5 +70,29 @@ export const roadmap: RoadmapItem[] = [
     project: "jonkeen-dev",
     status: "Done",
     dateAdded: "2026-05-18",
+  },
+  {
+    title: "Hero glow",
+    summary:
+      "Add the subtle hero glow explicitly allowed in the design language (only decorative element permitted). Use existing accent tokens at low opacity, scoped to home hero only.",
+    project: "jonkeen-dev",
+    status: "Exploring",
+    dateAdded: "2026-06-16",
+  },
+  {
+    title: "Quantified impact & metrics layer",
+    summary:
+      "Light layer of scannable stats/impact highlights on cards and in case studies (WCAG, Lighthouse, workflow improvements, etc.). Enrich project data and rendering.",
+    project: "jonkeen-dev",
+    status: "Exploring",
+    dateAdded: "2026-06-16",
+  },
+  {
+    title: "About expansions + narrative sync",
+    summary:
+      "Add compact journey milestones, sync Currently learning section, align resume project descriptions with lib/projects.ts.",
+    project: "jonkeen-dev",
+    status: "Exploring",
+    dateAdded: "2026-06-16",
   },
 ];

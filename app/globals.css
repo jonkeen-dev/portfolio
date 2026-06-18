@@ -108,4 +108,20 @@
   .back-link {
     @apply text-foreground-muted hover:text-foreground-secondary text-sm transition-colors;
   }
+
+  /* Subtle hero glow — the single allowed decorative element per design philosophy.
+     Very restrained, uses accent token, scoped to home hero only. */
+  .hero-glow {
+    position: absolute;
+    inset: -20% -30% -30% -30%;
+    background: radial-gradient(
+      circle at 50% 35%,
+      color-mix(in srgb, var(--accent) 6%, transparent) 0%,
+      transparent 65%
+    );
+    filter: blur(60px);
+    z-index: -1;
+    pointer-events: none;
+    border-radius: 999px;
+  }
 }

@@ -34,6 +34,20 @@ export default function CaseStudy({ project }: CaseStudyProps) {
         ))}
       </div>
 
+      {/* Light quantified impact highlights (portfolio improvement #4) */}
+      {project.slug === "jonkeen-dev" && (
+        <div className="mt-3 flex flex-wrap gap-2 text-xs">
+          <span className="tag">Dark AAA / Light strong WCAG</span>
+          <span className="tag">Lighthouse green (post batch)</span>
+        </div>
+      )}
+      {project.slug === "paletteforge" && (
+        <div className="mt-3 flex flex-wrap gap-2 text-xs">
+          <span className="tag">End-to-end ownership</span>
+          <span className="tag">Streamlined personal workflow</span>
+        </div>
+      )}
+
       {contentSections.map(({ heading, content }) => (
         <div key={heading}>
           <h2 className="section-h2 mt-12">{heading}</h2>
