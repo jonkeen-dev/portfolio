@@ -109,19 +109,27 @@
     @apply text-foreground-muted hover:text-foreground-secondary text-sm transition-colors;
   }
 
-  /* Subtle hero glow — the single allowed decorative element per design philosophy.
-     Very restrained, uses accent token, scoped to home hero only. */
+  /* Single soft glow behind the hero text (name + sub-text).
+     No box, no border, no double glow. Positioned and sized to sit behind Jon Keen + the paragraph. */
+  .hero-text {
+    position: relative;
+  }
+
   .hero-glow {
     position: absolute;
-    inset: -20% -30% -30% -30%;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -35%);
+    width: 95%;
+    height: 130%;
     background: radial-gradient(
-      circle at 50% 35%,
-      color-mix(in srgb, var(--accent) 6%, transparent) 0%,
-      transparent 65%
+      ellipse at 50% 45%,
+      color-mix(in srgb, var(--accent) 30%, transparent) 0%,
+      color-mix(in srgb, var(--accent-bright) 16%, transparent) 45%,
+      transparent 80%
     );
-    filter: blur(60px);
+    filter: blur(38px);
     z-index: -1;
     pointer-events: none;
-    border-radius: 999px;
   }
 }

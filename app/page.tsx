@@ -8,14 +8,16 @@ export default function Home() {
   return (
     <>
       <section className="relative mx-auto max-w-3xl px-6 pt-32 pb-16">
-        {/* Subtle hero glow — the single allowed decorative element (per design philosophy) */}
-        <div aria-hidden="true" className="hero-glow" />
         <p className="text-accent-bright font-mono text-sm">Software Engineer</p>
-        <h1 className="page-h1-hero">Jon Keen</h1>
-        <p className="prose-body mt-6 max-w-xl text-lg">
-          Software engineer with twenty years of retail context and an analyst&apos;s habit of
-          asking why first.
-        </p>
+        <div className="hero-text relative">
+          {/* Single clean soft glow behind Jon Keen + sub-text. No box, no border, one glow layer only. */}
+          <div aria-hidden="true" className="hero-glow" />
+          <h1 className="page-h1-hero">Jon Keen</h1>
+          <p className="prose-body mt-3 max-w-xl text-lg">
+            Software engineer with twenty years of retail context and an analyst&apos;s habit of
+            asking why first.
+          </p>
+        </div>
         <div className="mt-8 flex gap-4">
           <MotionButtonLink
             href="/projects"

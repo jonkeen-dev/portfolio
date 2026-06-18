@@ -74,9 +74,9 @@ export const roadmap: RoadmapItem[] = [
   {
     title: "Hero glow",
     summary:
-      "Add the subtle hero glow explicitly allowed in the design language (only decorative element permitted). Use existing accent tokens at low opacity, scoped to home hero only.",
+      "Clean single soft glow layer behind the name + sub-text on the homepage (no visible box or border). Uses accent tokens + blur for a restrained pop. Matches 'borders, crisp lines, soft glows' preference while staying minimal.",
     project: "jonkeen-dev",
-    status: "Exploring",
+    status: "Done",
     dateAdded: "2026-06-16",
   },
   {
