@@ -6,8 +6,9 @@ import LinkedInIcon from "@/components/icons/linkedin-icon";
 import MotionIconLink from "@/components/motion/motion-icon-link";
 
 export const metadata: Metadata = {
-  title: "About — jonkeen.dev",
-  description: "About Jon Keen — software engineering student, former retail operations leader.",
+  title: "About",
+  description:
+    "Jon Keen — software engineering student with a background in retail operations and business analysis.",
 };
 
 export default function AboutPage() {
@@ -18,9 +19,9 @@ export default function AboutPage() {
       <div className="mt-12">
         <h2 className="section-h2">Now</h2>
         <p className="prose-body mt-3">
-          I&apos;m a father and husband of almost 15 years, a full-time student, and a full-time
-          employee. Outside of work and classes, I&apos;m building this portfolio from scratch to
-          learn by doing. Every page is a decision I made and stood by. The rest of my time goes to
+          I&apos;m a dad and a husband of almost 15 years. I also work full time and go to school
+          full time. Outside of that, I&apos;m building this site from scratch so I can learn by
+          doing — every page here is a choice I made and can explain. Whatever time is left goes to
           family.
         </p>
       </div>
@@ -28,33 +29,32 @@ export default function AboutPage() {
       <div className="mt-12">
         <h2 className="section-h2">Background</h2>
         <p className="prose-body mt-3">
-          I spent 18 years working in retail operations. I began in stock roles, moved into fresh
-          produce, and became a Produce Manager. After that I joined a year-long Store Manager
-          training program that rotated me through every job in the store. I later ran a large food
-          service operation (kitchen, bakery, cafe, catering) as Food Service Manager. From there I
-          became an Assistant Store Manager and then spent two years as a Business Analyst,
-          connecting business needs with the systems that support them.
+          I spent 18 years in retail operations. I started in stock, moved into produce, and became
+          a Produce Manager. Then I joined a year-long Store Manager training program that rotated
+          me through every part of the store. I later ran kitchen, bakery, cafe, and catering as
+          Food Service Manager, then moved into Assistant Store Manager. After that I spent two
+          years as a Business Analyst, helping connect what the business needed with the systems
+          behind it.
         </p>
         <p className="prose-body mt-3">
-          The common thread was always the same: I wanted to understand how things actually worked
-          and then make them better. That is what led me to software engineering. I got tired of
-          just explaining what the business needed and decided to build the solutions myself.
+          The through-line was always the same: figure out how things really work, then make them
+          better. That&apos;s what pulled me into software. I got tired of only translating
+          requirements — I wanted to build the solutions myself.
         </p>
 
-        {/* Compact journey milestones */}
         <ul className="prose-body mt-3 list-disc pl-5 text-sm">
-          <li>18 years in retail operations, rising to Produce Manager and Food Service Manager</li>
-          <li>2 years as a Business Analyst linking business goals and technical systems</li>
-          <li>Now building real software (Next.js, React, and SQL-heavy projects)</li>
+          <li>18 years in retail operations, up through Produce and Food Service management</li>
+          <li>2 years as a Business Analyst between business needs and technical systems</li>
+          <li>Now building real software with JavaScript, TypeScript, React, and databases</li>
         </ul>
       </div>
 
       <div className="mt-12">
         <h2 className="section-h2">Currently learning</h2>
         <p className="prose-body mt-3">
-          Right now I&apos;m focused on JavaScript, TypeScript, and React by building real projects
-          that go beyond what I learn in class. I also want to get much stronger with SQL and
-          databases, and I&apos;m working on a project in that area.
+          My focus is JavaScript, TypeScript, and React — building real projects to go deeper than
+          class alone. I&apos;m also getting stronger with SQL and databases, and I have a project
+          planned around that.
         </p>
       </div>
 
