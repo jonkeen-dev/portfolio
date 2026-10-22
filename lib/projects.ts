@@ -7,7 +7,13 @@ export type Project = {
   slug: string;
   title: string;
   summary: string;
+  /** When false, omitted from home, projects index, sitemap, and public routes. */
+  published: boolean;
+  /** Prefer on the homepage featured strip when published. */
+  featured?: boolean;
   tags: string[];
+  /** Optional scannable chips under the summary. */
+  highlights?: string[];
   problem: string;
   constraints: string;
   decisions: string;
@@ -21,26 +27,21 @@ export const projects: Project[] = [
     slug: "jonkeen-dev",
     title: "jonkeen.dev",
     summary:
-      "A personal developer portfolio built from scratch with Next.js, React, and a dual-theme system. I wanted something that felt like mine rather than another template.",
-    tags: [
-      "Next.js 16",
-      "React 19",
-      "TypeScript",
-      "Tailwind CSS v4",
-      "next-themes",
-      "shadcn/ui",
-      "Vercel",
-    ],
+      "Personal portfolio built from scratch with Next.js — dual themes, case studies, and a deployment story I own end to end.",
+    published: true,
+    featured: true,
+    tags: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS v4", "Vercel"],
+    highlights: ["Dark AAA / light AA contrast", "Shipped on custom domain"],
     problem:
-      "After twenty years in retail operations and business analysis, I was moving into software engineering. I needed a portfolio that actually felt like me. Most templates looked too generic or too polished. I wanted to build something real that showed I could ship thoughtful work while being honest about my background. It had to feel believable to engineers without pretending I had ten years of professional coding experience.",
+      "Moving from retail ops and business analysis into engineering, I needed a portfolio that felt like me — not a template, and not a bluff about ten years of pro coding.",
     constraints:
-      "Next.js, Tailwind v4, and React were mostly new to me. I had only worked with JavaScript and TypeScript through The Odin Project. I also needed a working dark/light toggle that didn’t break layouts, and a simple way to deploy with a custom domain. At the same time I was still finding my voice as a developer.",
+      "Next.js, Tailwind v4, and React were mostly new. I needed a reliable dark/light toggle, accessible UI, and a clean deploy with a custom domain while still finding my voice.",
     decisions:
-      "I chose the App Router and tried to use server components by default. I only made things client-side when I really needed interactivity. For theming I used next-themes with CSS variables and Tailwind’s @theme inline so the switch works at runtime. I picked Geist for the font and shadcn/ui for accessible building blocks.",
+      "App Router with server components by default; client only where interactivity required. next-themes + CSS variables + Tailwind `@theme inline` for runtime theming. Geist + lean primitives for accessibility.",
     results:
-      "The site is live on Vercel with a custom domain. It works well in both light and dark mode and has simple, accessible navigation with a glass effect when you scroll. I also created the case study format you’re reading now so future projects have a consistent home. Both themes meet good contrast standards. Most importantly, it feels like something I actually built instead of just customized.",
+      "Live on Vercel with a custom domain, solid contrast in both themes, and a case-study format future projects can reuse. The site feels authored, not customized.",
     learned:
-      "Tailwind v4’s @theme inline does a lot of the work for live theme switching. The regular @theme version breaks it. I also learned that where you place the ThemeProvider really matters — anything outside it won’t react to the toggle. Overall this project showed me that shipping something real, even when you’re still learning, teaches you more than trying to make it perfect from the start.",
+      "`@theme inline` is required for live theme switching in Tailwind v4; ThemeProvider placement matters. Shipping imperfect, real work taught more than waiting to feel ready.",
     links: [
       { label: "Live site", href: "https://www.jonkeen.dev" },
       { label: "GitHub", href: "https://github.com/jonkeen-dev/portfolio" },
@@ -50,18 +51,38 @@ export const projects: Project[] = [
     slug: "paletteforge",
     title: "PaletteForge",
     summary:
-      "A Warhammer 40k miniature painting webapp that assists with planning and suggesting various colors used during your painting journey.",
+      "Warhammer 40k painting companion for planning harmonious palettes and paint journeys.",
+    published: false,
+    featured: false,
     tags: ["React", "TypeScript", "Node.js", "PostgreSQL", "Tailwind CSS"],
+    highlights: ["Full-stack MVP", "Color-theory driven"],
     problem:
-      "Miniature painters in the Warhammer 40k community often struggle to create cohesive color schemes. While general tools exist, none effectively combine an interactive color wheel with hobby-specific guidance for layering, shading, highlighting, and real paint equivalents from Citadel or Army Painter ranges. Hobbyists end up relying on scattered tutorials, forums, or manual trial-and-error, leading to inconsistent results, wasted paint, and schemes that clash under real lighting. PaletteForge addresses this gap by providing a dedicated web app where users start with a base color or faction theme and receive intelligent, harmonious palette suggestions grounded in color theory.",
+      "Painters juggle tutorials and trial-and-error to get cohesive schemes. General color tools miss hobby-specific layering, highlighting, and approximate paint matches.",
     constraints:
-      "As a solo side project, development time was limited to a few focused weeks to reach a viable MVP without scope creep. I worked with a full-stack setup (React, TypeScript, Node.js, PostgreSQL, Tailwind CSS) but prioritized browser performance for smooth color interactions over advanced features. Additional constraints included no budget for premium APIs, maintaining accessibility and responsiveness across devices, respecting IP by using approximate paint mappings, and ensuring the tool felt intuitive for both beginners and experienced painters.",
+      "Solo side project with a tight MVP window. Browser performance for color interactions mattered more than 3D previews or community features. No premium APIs; stay accessible and IP-respectful with approximate paint mappings.",
     decisions:
-      "I built an interactive color wheel using standard harmony rules (complementary, analogous, triadic, etc.) with real-time previews and paint suggestions driven by algorithmic color math rather than heavy ML. The frontend uses React + TypeScript for type-safe calculations and rich interactions, while a Node.js/Express backend with PostgreSQL handles saving schemes and user progress. Key trade-offs included focusing on core planning tools first (palette generation and journey tracking) over 3D model previews or community features, and keeping most logic client-side for instant feedback while using the database for persistence.",
+      "Harmony-based color wheel with algorithmic suggestions (not ML). React + TypeScript on the client for instant feedback; Node/Express + PostgreSQL for saved schemes. Scope locked to palette planning first.",
     results:
-      "The MVP successfully delivers dynamic, harmonious palettes tailored to Warhammer 40k painting, complete with layering tips and paint approximations. It is performant, responsive, and deployed with solid UX, allowing users to plan full painting journeys from base coat to highlights. This project demonstrated end-to-end ownership—from color theory implementation to full-stack integration—and significantly streamlined my own miniature painting workflow, serving as a strong full-stack example in my portfolio.",
+      "MVP generates harmonious palettes with layering tips and paint approximations. Proof of end-to-end ownership — kept unpublished on this site until demo-ready.",
     learned:
-      "Implementing color theory algorithms deepened my understanding of HSV/RGB manipulation and performance optimization in interactive UIs. The project reinforced the value of tight scoping in solo work and how TypeScript catches subtle errors in math-heavy domains early. From a product perspective, I learned that hobby tools succeed by reducing friction while preserving depth, and that clear documentation of decisions and trade-offs makes technical work more credible to recruiters. This experience further strengthened my ability to ship reliable systems under real-world constraints.",
+      "HSV/RGB math and TypeScript pay off in interactive UIs. Tight scope beats feature sprawl. Clear trade-offs read better to recruiters than long claims without a live demo.",
     links: [{ label: "GitHub", href: "https://github.com/jonkeen-dev/PaletteForge" }],
   },
 ];
+
+export function getPublishedProjects(): Project[] {
+  return projects.filter((p) => p.published);
+}
+
+export function getFeaturedProjects(): Project[] {
+  return getPublishedProjects().filter((p) => p.featured);
+}
+
+export function getProjectBySlug(slug: string): Project | undefined {
+  return projects.find((p) => p.slug === slug);
+}
+
+export function getPublishedProjectBySlug(slug: string): Project | undefined {
+  const project = getProjectBySlug(slug);
+  return project?.published ? project : undefined;
+}

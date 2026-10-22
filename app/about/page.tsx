@@ -6,7 +6,7 @@ import LinkedInIcon from "@/components/icons/linkedin-icon";
 import MotionIconLink from "@/components/motion/motion-icon-link";
 
 export const metadata: Metadata = {
-  title: "About — jonkeen.dev",
+  title: "About",
   description: "About Jon Keen — software engineering student, former retail operations leader.",
 };
 

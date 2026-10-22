@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 
-import { projects } from "@/lib/projects";
+import { getPublishedProjects } from "@/lib/projects";
 import { roadmap, STATUSES, type RoadmapStatus } from "@/lib/roadmap";
 
 const statusColors: Record<RoadmapStatus, string> = {
@@ -13,8 +13,10 @@ const statusColors: Record<RoadmapStatus, string> = {
   Done: "bg-status-done",
 };
 
-const projectMap = new Map(projects.map((p) => [p.slug, p.title]));
-const allProjectSlugs = projects.map((p) => p.slug);
+const publishedProjects = getPublishedProjects();
+const projectMap = new Map(publishedProjects.map((p) => [p.slug, p.title]));
+const allProjectSlugs = publishedProjects.map((p) => p.slug);
+const visibleRoadmap = roadmap.filter((item) => projectMap.has(item.project));
 
 export default function RoadmapClient() {
   const [activeStatuses, setActiveStatuses] = useState<Set<RoadmapStatus>>(
@@ -24,7 +26,7 @@ export default function RoadmapClient() {
   const [sortDirection, setSortDirection] = useState<"newest" | "oldest">("newest");
 
   const filteredItems = useMemo(() => {
-    const items = roadmap.filter(
+    const items = visibleRoadmap.filter(
       (item) => activeStatuses.has(item.status) && activeProjects.has(item.project),
     );
     items.sort((a, b) => {

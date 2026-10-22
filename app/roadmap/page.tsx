@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import RoadmapClient from "./roadmap-client";
 
 export const metadata: Metadata = {
-  title: "Roadmap — jonkeen.dev",
+  title: "Roadmap",
   description: "Feature tracking by status and project.",
 };
 
