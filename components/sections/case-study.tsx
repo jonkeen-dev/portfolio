@@ -7,16 +7,14 @@ type CaseStudyProps = {
 };
 
 const sections = (project: Project) => [
-  { heading: "Problem", content: project.problem },
-  { heading: "Constraints", content: project.constraints },
-  { heading: "Decisions", content: project.decisions },
-  { heading: "Results", content: project.results },
+  { heading: "The problem", content: project.problem },
+  { heading: "What I had to work with", content: project.constraints },
+  { heading: "What I chose", content: project.decisions },
+  { heading: "How it turned out", content: project.results },
   { heading: "What I learned", content: project.learned },
 ];
 
 export default function CaseStudy({ project }: CaseStudyProps) {
-  const contentSections = sections(project);
-
   return (
     <>
       <Link href="/projects" className="back-link">
@@ -28,21 +26,31 @@ export default function CaseStudy({ project }: CaseStudyProps) {
 
       <div className="mt-4 flex flex-wrap gap-2">
         {project.tags.map((tag) => (
-          <span key={tag} className="tag-header">
+          <span key={tag} className="tag">
             {tag}
           </span>
         ))}
       </div>
 
-      {contentSections.map(({ heading, content }) => (
+      {project.highlights && project.highlights.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2 text-xs">
+          {project.highlights.map((item) => (
+            <span key={item} className="tag">
+              {item}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {sections(project).map(({ heading, content }) => (
         <div key={heading}>
-          <h2 className="section-h2 mt-12">{heading}</h2>
-          <p className="prose-body mt-3">{content}</p>
+          <h2 className="section-h2 mt-10">{heading}</h2>
+          <p className="prose-body mt-2">{content}</p>
         </div>
       ))}
 
       {project.links.length > 0 && (
-        <div className="mt-12 flex gap-4">
+        <div className="mt-12 flex flex-wrap gap-4">
           {project.links.map(({ label, href }) => (
             <a
               key={label}

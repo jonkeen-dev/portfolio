@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     template: "%s — jonkeen.dev",
   },
   description:
-    "Jon Keen — A software engineer with twenty years of retail experience and an analyst's habit of asking why first.",
+    "Jon Keen — software engineer with twenty years in retail and analysis, and a habit of asking why first.",
   metadataBase: new URL("https://jonkeen.dev"),
   icons: {
     icon: "/favicon.ico",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "jonkeen.dev",
     description:
-      "Jon Keen — A software engineer with twenty years of retail experience and an analyst's habit of asking why first.",
+      "Jon Keen — software engineer with twenty years in retail and analysis, and a habit of asking why first.",
     images: [
       {
         url: "/opengraph-image",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "jonkeen.dev",
     description:
-      "Jon Keen — A software engineer with twenty years of retail experience and an analyst's habit of asking why first.",
+      "Jon Keen — software engineer with twenty years in retail and analysis, and a habit of asking why first.",
     images: ["/opengraph-image"],
   },
 };

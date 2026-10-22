@@ -108,4 +108,28 @@
   .back-link {
     @apply text-foreground-muted hover:text-foreground-secondary text-sm transition-colors;
   }
+
+  /* Single soft glow behind the hero text (name + sub-text).
+     No box, no border, no double glow. Positioned and sized to sit behind Jon Keen + the paragraph. */
+  .hero-text {
+    position: relative;
+  }
+
+  .hero-glow {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -35%);
+    width: 95%;
+    height: 130%;
+    background: radial-gradient(
+      ellipse at 50% 45%,
+      color-mix(in srgb, var(--accent) 30%, transparent) 0%,
+      color-mix(in srgb, var(--accent-bright) 16%, transparent) 45%,
+      transparent 80%
+    );
+    filter: blur(38px);
+    z-index: -1;
+    pointer-events: none;
+  }
 }
