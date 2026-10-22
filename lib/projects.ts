@@ -27,21 +27,21 @@ export const projects: Project[] = [
     slug: "jonkeen-dev",
     title: "jonkeen.dev",
     summary:
-      "Personal portfolio built from scratch with Next.js — dual themes, case studies, and a deployment story I own end to end.",
+      "My personal portfolio, built from scratch with Next.js — light and dark themes, short case studies, and a live site I deploy myself.",
     published: true,
     featured: true,
     tags: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS v4", "Vercel"],
-    highlights: ["Dark AAA / light AA contrast", "Shipped on custom domain"],
+    highlights: ["Works well in light and dark mode", "Live on my own domain"],
     problem:
-      "Moving from retail ops and business analysis into engineering, I needed a portfolio that felt like me — not a template, and not a bluff about ten years of pro coding.",
+      "I was moving from retail and business analysis into engineering. I needed a portfolio that felt like me — not a generic template, and not a resume that pretended I had a decade of pro coding behind me.",
     constraints:
-      "Next.js, Tailwind v4, and React were mostly new. I needed a reliable dark/light toggle, accessible UI, and a clean deploy with a custom domain while still finding my voice.",
+      "Next.js, Tailwind, and React were mostly new. I still needed a solid light/dark switch, an accessible layout, and a clean way to ship the site on a custom domain.",
     decisions:
-      "App Router with server components by default; client only where interactivity required. next-themes + CSS variables + Tailwind `@theme inline` for runtime theming. Geist + lean primitives for accessibility.",
+      "I used the App Router and kept most pages as server components. Client code only shows up where the page needs to be interactive. Themes use next-themes with CSS variables so the colors update live. I kept the design simple and readable.",
     results:
-      "Live on Vercel with a custom domain, solid contrast in both themes, and a case-study format future projects can reuse. The site feels authored, not customized.",
+      "The site is live with a custom domain. Both themes are easy to read, navigation stays usable, and new projects can follow the same short case-study format. It feels like something I built, not something I only customized.",
     learned:
-      "`@theme inline` is required for live theme switching in Tailwind v4; ThemeProvider placement matters. Shipping imperfect, real work taught more than waiting to feel ready.",
+      "Theme setup is picky — where the theme provider sits, and how Tailwind maps the colors, both matter. More than anything, shipping something real taught me faster than waiting until everything felt perfect.",
     links: [
       { label: "Live site", href: "https://www.jonkeen.dev" },
       { label: "GitHub", href: "https://github.com/jonkeen-dev/portfolio" },
@@ -51,21 +51,21 @@ export const projects: Project[] = [
     slug: "paletteforge",
     title: "PaletteForge",
     summary:
-      "Warhammer 40k painting companion for planning harmonious palettes and paint journeys.",
+      "A helper for Warhammer 40k painters to plan color schemes and painting steps.",
     published: false,
     featured: false,
     tags: ["React", "TypeScript", "Node.js", "PostgreSQL", "Tailwind CSS"],
-    highlights: ["Full-stack MVP", "Color-theory driven"],
+    highlights: ["Full-stack practice project", "Built around color theory"],
     problem:
-      "Painters juggle tutorials and trial-and-error to get cohesive schemes. General color tools miss hobby-specific layering, highlighting, and approximate paint matches.",
+      "Painters often bounce between tutorials and trial-and-error to get colors that work together. General color tools rarely cover hobby needs like layering, highlights, or close paint matches.",
     constraints:
-      "Solo side project with a tight MVP window. Browser performance for color interactions mattered more than 3D previews or community features. No premium APIs; stay accessible and IP-respectful with approximate paint mappings.",
+      "It was a solo side project with a short window for a first version. Smooth color picking in the browser mattered more than 3D previews or social features. I also had no budget for paid APIs.",
     decisions:
-      "Harmony-based color wheel with algorithmic suggestions (not ML). React + TypeScript on the client for instant feedback; Node/Express + PostgreSQL for saved schemes. Scope locked to palette planning first.",
+      "I built a color wheel that suggests related colors using simple rules, not machine learning. Most of the feedback happens right in the browser. A small backend saves schemes when someone wants to keep them. I kept the first version focused on planning palettes.",
     results:
-      "MVP generates harmonious palettes with layering tips and paint approximations. Proof of end-to-end ownership — kept unpublished on this site until demo-ready.",
+      "The first version can suggest balanced palettes with layering tips and approximate paint matches. I am keeping it off this site until there is a clear demo to show.",
     learned:
-      "HSV/RGB math and TypeScript pay off in interactive UIs. Tight scope beats feature sprawl. Clear trade-offs read better to recruiters than long claims without a live demo.",
+      "Color math gets easier with TypeScript watching the details. A tight scope beats a long feature list. Clear trade-offs are more honest than big claims without something people can try.",
     links: [{ label: "GitHub", href: "https://github.com/jonkeen-dev/PaletteForge" }],
   },
 ];

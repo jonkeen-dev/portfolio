@@ -5,7 +5,7 @@ import { getPublishedProjects } from "@/lib/projects";
 
 export const metadata: Metadata = {
   title: "Projects",
-  description: "Case studies and work by Jon Keen.",
+  description: "Projects and short case studies by Jon Keen.",
 };
 
 export default function ProjectsPage() {
@@ -14,10 +14,12 @@ export default function ProjectsPage() {
   return (
     <section className="mx-auto max-w-6xl px-6 pt-32 pb-16">
       <h1 className="page-h1">Projects</h1>
-      <p className="prose-body mt-4 max-w-2xl">Selected work — short case studies.</p>
+      <p className="prose-body mt-4 max-w-2xl">
+        A few things I&apos;ve built, with short write-ups instead of long essays.
+      </p>
 
       {published.length === 0 ? (
-        <p className="text-foreground-muted mt-12 text-sm">No projects yet. Check back soon.</p>
+        <p className="text-foreground-muted mt-12 text-sm">Nothing published yet. Check back soon.</p>
       ) : (
         <ul className="mt-12 grid gap-6 sm:grid-cols-2">
           {published.map((project) => (

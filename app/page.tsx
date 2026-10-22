@@ -10,12 +10,12 @@ export default function Home() {
       <section className="relative mx-auto max-w-3xl px-6 pt-32 pb-16">
         <p className="text-accent-bright font-mono text-sm">Software Engineer</p>
         <div className="hero-text relative">
-          {/* Single clean soft glow behind Jon Keen + sub-text. No box, no border, one glow layer only. */}
+          {/* Soft glow behind the name and intro line only. */}
           <div aria-hidden="true" className="hero-glow" />
           <h1 className="page-h1-hero">Jon Keen</h1>
           <p className="prose-body mt-3 max-w-xl text-lg">
-            Twenty years in retail ops and analysis — now building software with the same habit of
-            asking why first.
+            Twenty years in retail and analysis. Now I build software — and I still start by asking
+            why.
           </p>
         </div>
         <div className="mt-8 flex flex-wrap gap-4">

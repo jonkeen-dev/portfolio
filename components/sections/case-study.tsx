@@ -7,10 +7,10 @@ type CaseStudyProps = {
 };
 
 const sections = (project: Project) => [
-  { heading: "Problem", content: project.problem },
-  { heading: "Constraints", content: project.constraints },
-  { heading: "Decisions", content: project.decisions },
-  { heading: "Results", content: project.results },
+  { heading: "The problem", content: project.problem },
+  { heading: "What I had to work with", content: project.constraints },
+  { heading: "What I chose", content: project.decisions },
+  { heading: "How it turned out", content: project.results },
   { heading: "What I learned", content: project.learned },
 ];
 

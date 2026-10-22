@@ -123,7 +123,9 @@ export default function RoadmapClient() {
 
       {/* Cards */}
       {filteredItems.length === 0 ? (
-        <p className="text-foreground-muted mt-12 text-sm">No items match the current filters.</p>
+        <p className="text-foreground-muted mt-12 text-sm">
+          Nothing matches these filters. Try turning a few back on.
+        </p>
       ) : (
         <ul className="mt-8 grid gap-4 sm:grid-cols-2">
           {filteredItems.map((item) => (

@@ -1,6 +1,6 @@
 # jonkeen.dev
 
-My personal portfolio and writing site to document my projects and learnings as I navigate things.
+My personal portfolio site — a place to share projects and what I'm learning along the way.
 
 ## Design philosophy
 
@@ -9,7 +9,7 @@ Minimal and beautiful.
 ## Stack
 
 - **Framework:** Next.js 16 (App Router) · React 19 · TypeScript
-- **Styling:** Tailwind CSS v4 · shadcn/ui · `next-themes`
+- **Styling:** Tailwind CSS v4 · `next-themes`
 - **Motion:** Framer Motion
 - **Tooling:** ESLint · Prettier
 - **Hosting:** Vercel · Cloudflare DNS
@@ -18,22 +18,19 @@ Minimal and beautiful.
 
 ```text
 portfolio/
-├── app/              # Next.js App Router (pages, layout, not-found)
+├── app/              # Pages, layout, and metadata
 ├── components/
-│   ├── layout/       # Nav, footer, shell pieces
-│   ├── sections/     # Page-level composed sections
-│   └── ui/           # shadcn/ui primitives
-├── content/
-│   └── projects/     # Project case studies
-├── lib/              # Utilities, data helpers
-├── public/           # Static assets
-└── docs/             # Working notes (gitignored)
+│   ├── layout/       # Nav, footer
+│   ├── sections/     # Case study and page sections
+│   └── motion/       # Shared motion wrappers
+├── lib/              # Project and roadmap data helpers
+└── public/           # Static assets (resume, etc.)
 ```
 
 ## Status
 
-Active early-stage build.
+Active early-stage build. Work lands on `dev` first, then `main` for production.
 
 ## Credits
 
-Built by Jon Keen. Planning and pair-programming assistance from Claude.
+Built by Jon Keen.
