@@ -4,6 +4,7 @@ import Providers from "@/components/providers";
 import Nav from "@/components/layout/nav";
 import Footer from "@/components/layout/footer";
 import PageTransition from "@/components/motion/page-transition";
+import { siteUrl } from "@/lib/site";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
   },
   description:
     "Jon Keen — software engineer with twenty years in retail and analysis, and a habit of asking why first.",
-  metadataBase: new URL("https://jonkeen.dev"),
+  metadataBase: new URL(siteUrl),
   icons: {
     icon: "/favicon.ico",
   },
@@ -65,7 +66,7 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col">
         <Providers>
           <Nav />
-          <main className="flex-1">
+          <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
             <PageTransition>{children}</PageTransition>
           </main>
           <Footer />

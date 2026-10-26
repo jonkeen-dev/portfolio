@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const project = getPublishedProjectBySlug(slug);
   if (!project) {
-    return { title: "Project" };
+    notFound();
   }
   return {
     title: project.title,

@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Not found",
+  description: "This page may not be built yet, or the link might be off.",
+};
 
 export default function NotFound() {
   return (

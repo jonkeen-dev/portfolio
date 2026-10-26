@@ -48,7 +48,8 @@
   --background-secondary: #091518;
   --foreground: #e0f4f8;
   --foreground-secondary: #7fb8c8;
-  --foreground-muted: #4a7a8a;
+  /* Same hue as the previous #4a7a8a, lightened to clear WCAG AA 4.5:1 on both dark surfaces (#050d10 ~4.93:1, #091518 ~4.67:1). */
+  --foreground-muted: #528799;
   --accent: #0891b2;
   --accent-bright: #22d3ee;
   --border: #0891b2;
