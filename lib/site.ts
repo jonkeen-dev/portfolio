@@ -1,2 +1,2 @@
-/** Public origin for metadataBase, sitemap, and robots. www vs apex is unconfirmed. */
-export const siteUrl = "https://jonkeen.dev";
+/** Canonical origin. The apex 307-redirects here. */
+export const siteUrl = "https://www.jonkeen.dev";

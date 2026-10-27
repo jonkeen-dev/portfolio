@@ -27,10 +27,14 @@ export const metadata: Metadata = {
   description:
     "Jon Keen — software engineer with twenty years in retail and analysis, and a habit of asking why first.",
   metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: "./",
+  },
   icons: {
     icon: "/favicon.ico",
   },
   openGraph: {
+    url: "./",
     title: "jonkeen.dev",
     description:
       "Jon Keen — software engineer with twenty years in retail and analysis, and a habit of asking why first.",
