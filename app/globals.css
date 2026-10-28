@@ -33,8 +33,12 @@
   --foreground: #1a1a1a;
   --foreground-secondary: #3d3d4e;
   --foreground-muted: #555564;
-  --accent: #4f46e5;
-  --accent-bright: #4338ca;
+  /* Same hue as dark --accent #0891b2, darkened for cream paper.
+     #0e6d82 vs #f8f7f5 is 5.56:1, vs #eeecea is 5.05:1,
+     vs a 10% wash of itself is 4.83:1 (text AA 4.5:1).
+     Toggle knob vs the 25% track is 3.88:1 (UI AA 3:1). */
+  --accent: #0e6d82;
+  --accent-bright: #0e6d82;
   --border: #1e1e2e;
   --status-exploring: #b45309;
   --status-planned: #2563eb;
@@ -78,9 +82,9 @@
   .page-h1 {
     @apply text-foreground text-4xl font-medium tracking-tight;
   }
-  /* Hero variant on home only keeps the responsive + leading for visual intent */
+  /* Home hero only. Root font is already ~19–21px, so these display sizes stay large. */
   .page-h1-hero {
-    @apply text-foreground mt-4 text-4xl leading-tight font-medium tracking-tight sm:text-5xl;
+    @apply text-foreground text-6xl leading-none font-semibold tracking-tight sm:text-8xl;
   }
 
   .section-h2 {
@@ -108,29 +112,5 @@
   /* For case study back links and similar secondary nav */
   .back-link {
     @apply text-foreground-muted hover:text-foreground-secondary text-sm transition-colors;
-  }
-
-  /* Single soft glow behind the hero text (name + sub-text).
-     No box, no border, no double glow. Positioned and sized to sit behind Jon Keen + the paragraph. */
-  .hero-text {
-    position: relative;
-  }
-
-  .hero-glow {
-    position: absolute;
-    left: 50%;
-    top: 40%;
-    transform: translate(-50%, -35%);
-    width: 95%;
-    height: 130%;
-    background: radial-gradient(
-      ellipse at 50% 45%,
-      color-mix(in srgb, var(--accent) 30%, transparent) 0%,
-      color-mix(in srgb, var(--accent-bright) 16%, transparent) 45%,
-      transparent 80%
-    );
-    filter: blur(38px);
-    z-index: -1;
-    pointer-events: none;
   }
 }
