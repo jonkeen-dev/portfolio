@@ -32,6 +32,16 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# tracker app (own package). Keep the portfolio install and build isolated.
+tracker/node_modules
+tracker/.next
+tracker/.data
+tracker/test-results
+tracker/playwright-report
+tracker/coverage
+tracker/blob-report
 
 # vercel
 .vercel
