@@ -3,8 +3,9 @@
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 
-import { getPublishedProjects } from "@/lib/projects";
-import { roadmap, STATUSES, type RoadmapStatus } from "@/lib/roadmap";
+const STATUSES = ["Exploring", "Planned", "In Progress", "Done"] as const;
+
+type RoadmapStatus = (typeof STATUSES)[number];
 
 const statusColors: Record<RoadmapStatus, string> = {
   Exploring: "bg-status-exploring",
@@ -13,28 +14,47 @@ const statusColors: Record<RoadmapStatus, string> = {
   Done: "bg-status-done",
 };
 
-const publishedProjects = getPublishedProjects();
-const projectMap = new Map(publishedProjects.map((p) => [p.slug, p.title]));
-const allProjectSlugs = publishedProjects.map((p) => p.slug);
-const visibleRoadmap = roadmap.filter((item) => projectMap.has(item.project));
+export type RoadmapProjectOption = {
+  slug: string;
+  title: string;
+};
 
-export default function RoadmapClient() {
+export type RoadmapCard = {
+  title: string;
+  summary: string;
+  project: string;
+  status: RoadmapStatus;
+  dateAdded: string;
+};
+
+type RoadmapClientProps = {
+  projects: RoadmapProjectOption[];
+  items: RoadmapCard[];
+};
+
+export default function RoadmapClient({ projects, items }: RoadmapClientProps) {
+  const projectMap = useMemo(
+    () => new Map(projects.map((project) => [project.slug, project.title])),
+    [projects],
+  );
   const [activeStatuses, setActiveStatuses] = useState<Set<RoadmapStatus>>(
     () => new Set(["Exploring", "Planned", "In Progress"]),
   );
-  const [activeProjects, setActiveProjects] = useState<Set<string>>(() => new Set(allProjectSlugs));
+  const [activeProjects, setActiveProjects] = useState<Set<string>>(
+    () => new Set(projects.map((project) => project.slug)),
+  );
   const [sortDirection, setSortDirection] = useState<"newest" | "oldest">("newest");
 
   const filteredItems = useMemo(() => {
-    const items = visibleRoadmap.filter(
+    const next = items.filter(
       (item) => activeStatuses.has(item.status) && activeProjects.has(item.project),
     );
-    items.sort((a, b) => {
+    next.sort((a, b) => {
       const cmp = a.dateAdded.localeCompare(b.dateAdded);
       return sortDirection === "newest" ? -cmp : cmp;
     });
-    return items;
-  }, [activeStatuses, activeProjects, sortDirection]);
+    return next;
+  }, [items, activeStatuses, activeProjects, sortDirection]);
 
   function toggleStatus(status: RoadmapStatus) {
     setActiveStatuses((prev) => {
@@ -90,12 +110,12 @@ export default function RoadmapClient() {
         {/* Project filters */}
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-foreground-muted text-xs tracking-wide uppercase">Project</span>
-          {allProjectSlugs.map((slug) => {
-            const active = activeProjects.has(slug);
+          {projects.map((project) => {
+            const active = activeProjects.has(project.slug);
             return (
               <button
-                key={slug}
-                onClick={() => toggleProject(slug)}
+                key={project.slug}
+                onClick={() => toggleProject(project.slug)}
                 aria-pressed={active}
                 className={`rounded-full border px-3 py-1 text-xs transition-colors ${
                   active
@@ -103,7 +123,7 @@ export default function RoadmapClient() {
                     : "border-border/30 text-foreground-muted hover:border-border/50"
                 }`}
               >
-                {projectMap.get(slug)}
+                {projectMap.get(project.slug)}
               </button>
             );
           })}

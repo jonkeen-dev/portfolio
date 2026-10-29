@@ -26,6 +26,7 @@ export default function Home() {
             className="bg-accent-bright text-background rounded-md px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-85"
           >
             View resume
+            <span className="sr-only"> (opens in a new tab)</span>
           </MotionButtonLink>
           <MotionButtonLink
             href="/about"
