@@ -1,13 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-
-const MotionLink = motion.create(Link);
-const navSpring = { type: "spring" as const, stiffness: 500, damping: 30 };
 
 const NAV_LINKS = [
   { href: "/projects", label: "Projects" },
@@ -15,27 +11,24 @@ const NAV_LINKS = [
   { href: "/roadmap", label: "Roadmap" },
 ] as const;
 
-function NavLinks({ pathname, compact = false }: { pathname: string; compact?: boolean }) {
+function NavLinks({ pathname }: { pathname: string }) {
   return (
     <>
       {NAV_LINKS.map(({ href, label }) => {
         const active = pathname === href;
         return (
-          <MotionLink
+          <Link
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
             className={`text-sm underline-offset-4 transition-colors ${
               active
                 ? "text-foreground decoration-foreground underline decoration-2"
-                : "text-foreground-secondary hover:text-foreground"
+                : "text-foreground-secondary hover:text-foreground hover:underline"
             }`}
-            whileHover={compact ? { y: -1 } : { scale: 1.2, y: -1 }}
-            whileFocus={compact ? { y: -1 } : { scale: 1.2, y: -1 }}
-            transition={navSpring}
           >
             {label}
-          </MotionLink>
+          </Link>
         );
       })}
     </>
@@ -65,7 +58,7 @@ export default function Nav() {
       >
         Skip to content
       </a>
-      <div className="mx-auto max-w-6xl px-6">
+      <div className="mx-auto max-w-5xl px-6">
         {/* Row 1: Brand + desktop nav + right controls */}
         <div className="flex h-14 items-center justify-between">
           <Link
@@ -78,18 +71,15 @@ export default function Nav() {
             <NavLinks pathname={pathname} />
           </nav>
           <div className="flex items-center gap-3">
-            <motion.a
+            <a
               href="/resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent-bright border-accent-bright/30 hover:bg-accent-bright/10 hidden rounded-md border px-3 py-1.5 text-xs transition-colors sm:inline-flex"
-              whileHover={{ scale: 1.1, y: -1 }}
-              whileFocus={{ scale: 1.1, y: -1 }}
-              transition={navSpring}
             >
               Resume
               <span className="sr-only"> (opens in a new tab)</span>
-            </motion.a>
+            </a>
             <button
               type="button"
               onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
@@ -108,19 +98,16 @@ export default function Nav() {
 
         {/* Row 2: Mobile nav links */}
         <nav className="flex items-center gap-5 pb-2 md:hidden">
-          <NavLinks pathname={pathname} compact />
-          <motion.a
+          <NavLinks pathname={pathname} />
+          <a
             href="/resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-foreground-secondary hover:text-foreground text-sm transition-colors sm:hidden"
-            whileHover={{ y: -1 }}
-            whileFocus={{ y: -1 }}
-            transition={navSpring}
+            className="text-foreground-secondary hover:text-foreground text-sm underline-offset-4 transition-colors hover:underline sm:hidden"
           >
             Resume
             <span className="sr-only"> (opens in a new tab)</span>
-          </motion.a>
+          </a>
         </nav>
       </div>
     </header>

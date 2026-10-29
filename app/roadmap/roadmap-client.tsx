@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 
 const STATUSES = ["Exploring", "Planned", "In Progress", "Done"] as const;
@@ -149,11 +148,9 @@ export default function RoadmapClient({ projects, items }: RoadmapClientProps) {
       ) : (
         <ul className="mt-8 grid gap-4 sm:grid-cols-2">
           {filteredItems.map((item) => (
-            <motion.li
+            <li
               key={`${item.project}-${item.title}`}
-              className="border-border/30 rounded-lg border p-6"
-              whileHover={{ y: -2 }}
-              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className="border-accent/75 bg-background-secondary hover:border-accent rounded-lg border p-6 transition-colors"
             >
               <div className="flex items-center gap-2">
                 <span
@@ -164,7 +161,7 @@ export default function RoadmapClient({ projects, items }: RoadmapClientProps) {
               <h3 className="card-title mt-3">{item.title}</h3>
               <p className="text-foreground-muted mt-1 text-xs">{projectMap.get(item.project)}</p>
               <p className="text-foreground-secondary mt-2 text-sm">{item.summary}</p>
-            </motion.li>
+            </li>
           ))}
         </ul>
       )}

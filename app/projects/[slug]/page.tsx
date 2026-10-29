@@ -32,8 +32,10 @@ export default async function ProjectPage({ params }: PageProps) {
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-6 pt-32 pb-16">
-      <CaseStudy project={project} />
+    <section className="mx-auto max-w-5xl px-6 pt-32 pb-16">
+      <div className="max-w-[70ch]">
+        <CaseStudy project={project} />
+      </div>
     </section>
   );
 }

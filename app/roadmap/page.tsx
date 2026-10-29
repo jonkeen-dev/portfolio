@@ -27,7 +27,7 @@ export default function RoadmapPage() {
     }));
 
   return (
-    <section className="mx-auto max-w-6xl px-6 pt-32 pb-16">
+    <section className="mx-auto max-w-5xl px-6 pt-32 pb-16">
       <h1 className="page-h1">Roadmap</h1>
       <p className="prose-body mt-4 max-w-2xl">
         A public look at what I&apos;m working on. Not the main story — just an honest backlog.

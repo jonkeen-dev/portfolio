@@ -10,15 +10,6 @@ type MotionCardLinkProps = Omit<
 
 const MotionLink = motion.create(Link);
 
-const spring = { stiffness: 400, damping: 25 };
-
 export default function MotionCardLink(props: MotionCardLinkProps) {
-  return (
-    <MotionLink
-      whileHover={{ scale: 1.02, y: -1 }}
-      whileFocus={{ scale: 1.02, y: -1 }}
-      transition={{ type: "spring", ...spring }}
-      {...props}
-    />
-  );
+  return <MotionLink {...props} />;
 }
