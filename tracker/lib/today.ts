@@ -13,10 +13,13 @@ import {
   sessionTemplates,
   setLogs,
   patterns,
+  videos,
   weeks,
   workoutSessions,
 } from "@/lib/db/schema";
 import { athleteWeek, daysBetween, trainingDay } from "@/lib/engine/dates";
+import { displayTitle, nextTrainingIso, shortWeekday, weekTrainingDates, weekdayName } from "@/lib/plan";
+import { restBounds } from "@/lib/timer";
 import { doseFor } from "@/lib/engine/targets";
 import type { WeekTargets } from "@/lib/engine/types";
 
@@ -43,7 +46,20 @@ export type TodayItem = {
   level: number;
   rungTotal: number;
   patternName: string;
+  description: string;
+  safetyNote: string | null;
+  restLong: number;
+  aimRir: number;
+  nextName: string | null;
+  sessionsAtTop: number;
+  video: { youtubeId: string; title: string; watchUrl: string } | null;
 };
+
+export type PrepItem = { name: string; detail: string; kind: "warmup" | "cooldown" };
+
+export type WeekDot = { label: string; date: string; done: boolean };
+
+export type NextSession = { date: string; weekday: string; day: string; title: string; minutes: number };
 
 export type TodayTest = {
   id: string;
@@ -69,8 +85,11 @@ export type TodayModel = {
   outside: boolean;
   rest: boolean;
   items: TodayItem[];
-  prep: Array<{ name: string; detail: string }>;
+  prep: PrepItem[];
   tests: TodayTest[];
+  estMinutes: number;
+  weekDots: WeekDot[];
+  nextSession: NextSession | null;
   exerciseChoices: Array<{ id: string; name: string; patternId: string; level: number }>;
   suggestions: MovementSuggestion[];
   levels: LevelCard[];
@@ -152,6 +171,10 @@ export async function loadToday(userId: string, date: string): Promise<TodayMode
     db.select({ id: patterns.id, name: patterns.name }).from(patterns),
   ]);
   const patternNames = new Map(patternRows.map((row) => [row.id, row.name]));
+  const [weekDots, nextSession] = await Promise.all([
+    loadWeekDots(db, userId, profile.startDate, weekNumber),
+    loadNextSession(db, profile.startDate, date),
+  ]);
 
   const catalog = await db.select().from(exercises).orderBy(asc(exercises.patternId), asc(exercises.level));
   const byId = new Map(catalog.map((row) => [row.id, row]));
@@ -180,6 +203,9 @@ export async function loadToday(userId: string, date: string): Promise<TodayMode
     exerciseChoices: choices,
     suggestions,
     levels,
+    estMinutes: 0,
+    weekDots,
+    nextSession,
   };
   if (!day || !targets || base.outside) return base;
 
@@ -251,7 +277,10 @@ export async function loadToday(userId: string, date: string): Promise<TodayMode
   }
 
   const items: TodayItem[] = [];
-  const prep: Array<{ name: string; detail: string }> = [];
+  const prep: PrepItem[] = [];
+  const videoRows = await db.select().from(videos).where(eq(videos.role, "primary"));
+  const videoByExercise = new Map(videoRows.map((row) => [row.exerciseId, row]));
+  const aim = aimRir(targets.targetRir);
   for (const row of rows) {
     const patternId = row.patternId ?? "";
     const override = WORK.has(patternId) ? latestLevel.get(patternId) : undefined;
@@ -260,10 +289,11 @@ export async function loadToday(userId: string, date: string): Promise<TodayMode
     if (!exercise) continue;
     if (!WORK.has(exercise.patternId) || row.block === "test") {
       const detail = [row.repsTarget, row.holdTarget, row.notes].filter(Boolean).join(" · ");
-      prep.push({ name: exercise.name, detail });
+      prep.push({ name: exercise.name, detail, kind: row.block === "cooldown" ? "cooldown" : "warmup" });
       continue;
     }
     const dose = doseFor(targets, exercise.patternId, exercise.unit);
+    const bounds = restBounds(row.rest || targets.restSeconds);
     const ladder = catalog.filter(
       (choice) =>
         choice.patternId === exercise.patternId &&
@@ -275,6 +305,9 @@ export async function loadToday(userId: string, date: string): Promise<TodayMode
     for (const set of setsByLog.get(log?.id ?? "") ?? []) {
       if (set.setNumber >= 1 && set.setNumber <= logged.length) logged[set.setNumber - 1] = set.value;
     }
+    const video = videoByExercise.get(exercise.id);
+    const next = exercise.progressionId ? byId.get(exercise.progressionId) : undefined;
+    const suggestion = suggestions.find((entry) => entry.patternId === exercise.patternId);
     items.push({
       key: row.id,
       order: row.order,
@@ -287,8 +320,18 @@ export async function loadToday(userId: string, date: string): Promise<TodayMode
       prescribedSets: dose.prescribedSets,
       targetMin: dose.targetMin,
       targetMax: dose.targetMax,
-      restSeconds: restSecondsOf(row.rest || targets.restSeconds),
+      restSeconds: bounds.short,
+      restLong: bounds.long,
+      aimRir: aim,
       cues: exercise.cues,
+      description: exercise.description,
+      safetyNote: exercise.safetyNote,
+      nextName: next?.name ?? null,
+      sessionsAtTop: suggestion?.sessionsAtTop ?? 0,
+      video:
+        video?.youtubeId && video.status === "ok"
+          ? { youtubeId: video.youtubeId, title: video.title, watchUrl: video.url }
+          : null,
       logged,
       previous: (previous.get(exercise.id)?.values ?? []).filter((value) => typeof value === "number"),
       exerciseLogId: log?.id ?? null,
@@ -320,5 +363,48 @@ export async function loadToday(userId: string, date: string): Promise<TodayMode
     items,
     prep,
     tests,
+    estMinutes: template.estMinutes,
+  };
+}
+
+function aimRir(text: string): number {
+  const match = /(\d+)/.exec(text);
+  return match ? Number(match[1]) : 3;
+}
+
+async function loadWeekDots(
+  db: ReturnType<typeof getDatabase>["db"],
+  userId: string,
+  startDate: string,
+  week: number,
+): Promise<WeekDot[]> {
+  if (week < 1 || week > 12) return [];
+  const dates = weekTrainingDates(startDate, week);
+  const rows = await db
+    .select({ date: workoutSessions.date, completedAt: workoutSessions.completedAt })
+    .from(workoutSessions)
+    .where(and(eq(workoutSessions.userId, userId), sql`${workoutSessions.date} in (${sql.join(dates.map((item) => sql`${item}`), sql`, `)})`));
+  const done = new Set(rows.filter((row) => row.completedAt).map((row) => row.date));
+  return dates.map((item) => ({ label: shortWeekday(item), date: item, done: done.has(item) }));
+}
+
+async function loadNextSession(
+  db: ReturnType<typeof getDatabase>["db"],
+  startDate: string,
+  date: string,
+): Promise<NextSession | null> {
+  const next = nextTrainingIso(date, startDate);
+  if (!next) return null;
+  const week = athleteWeek(next, startDate);
+  const day = trainingDay(next, startDate);
+  if (!day) return null;
+  const id = `W${String(week).padStart(2, "0")}-${day}`;
+  const [template] = await db.select().from(sessionTemplates).where(eq(sessionTemplates.id, id)).limit(1);
+  return {
+    date: next,
+    weekday: weekdayName(next),
+    day,
+    title: displayTitle(template?.title ?? "Full body"),
+    minutes: template?.estMinutes ?? 25,
   };
 }

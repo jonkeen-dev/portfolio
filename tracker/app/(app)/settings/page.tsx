@@ -4,7 +4,8 @@ import { PasskeyButton, SignOutButton, ThemeChooser } from "@/components/account
 import { ButtonLink } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { SubmitButton } from "@/components/ui/submit-button";
-import { deleteAccount, revokeInvite, saveProfile, saveSharing, sendInvite } from "@/lib/actions";
+import { deleteAccount, revokeInvite, saveProfile, saveSharing, saveWorkoutPrefs, sendInvite } from "@/lib/actions";
+import { readWorkoutPrefs } from "@/lib/workout-prefs";
 import { formatCalendarDate, formatInstantDate, formatZonedDateTime } from "@/lib/format";
 import { getDatabase } from "@/lib/db";
 import { auditEvents, invites } from "@/lib/db/schema";
@@ -42,6 +43,8 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   const sections = new Set(profile.visibleSections);
   const deleteError = error && (error.includes("DELETE") || error.toLowerCase().includes("delet")) ? error : null;
 
+  const workout = readWorkoutPrefs(profile.prefs);
+
   return (
     <>
       <PageHeader title="Settings" />
@@ -74,6 +77,34 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
             <input type="checkbox" name="reduceMotion" defaultChecked={Boolean(prefs.reduceMotion)} /> Reduce motion
           </label>
           <SubmitButton variant="secondary">Save profile</SubmitButton>
+        </form>
+      </section>
+
+      <section className="card" aria-labelledby="workout-heading">
+        <h2 id="workout-heading">Workout</h2>
+        <form className="stack" action={saveWorkoutPrefs}>
+          <fieldset>
+            <legend>Rest timer</legend>
+            <label className="choice">
+              <input type="radio" name="restTimer" value="shortest" defaultChecked={workout.restTimer === "shortest"} /> Shortest
+            </label>
+            <label className="choice">
+              <input type="radio" name="restTimer" value="longest" defaultChecked={workout.restTimer === "longest"} /> Longest
+            </label>
+            <label className="choice">
+              <input type="radio" name="restTimer" value="off" defaultChecked={workout.restTimer === "off"} /> Off
+            </label>
+          </fieldset>
+          <label className="choice">
+            <input type="checkbox" name="holdLeadIn" defaultChecked={workout.holdLeadIn} /> Count down 3-2-1 before a hold
+          </label>
+          <label className="choice">
+            <input type="checkbox" name="vibrate" defaultChecked={workout.vibrate} /> Vibrate
+          </label>
+          <label className="choice">
+            <input type="checkbox" name="keepScreenOn" defaultChecked={workout.keepScreenOn} /> Keep screen on during a session
+          </label>
+          <SubmitButton variant="secondary">Save workout</SubmitButton>
         </form>
       </section>
 

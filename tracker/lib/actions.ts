@@ -21,6 +21,7 @@ import { sendAppEmail } from "@/lib/email";
 import { appOrigin, env, isAllowedEmail } from "@/lib/env";
 import { normalizeHandle, validHandle } from "@/lib/handles";
 import { currentProfile, currentSession, userRole } from "@/lib/session";
+import { readWorkoutPrefs } from "@/lib/workout-prefs";
 import { isIsoDate } from "@/lib/validators";
 
 const SECTIONS: PublicSection[] = ["stats_charts", "level_history", "set_logs"];
@@ -231,6 +232,80 @@ export async function saveAssessment(formData: FormData) {
       });
   }
   redirect(isIsoDate(date) ? `/today?on=${date}` : "/today");
+}
+
+export async function saveAssessmentItem(formData: FormData) {
+  const session = await currentSession();
+  if (!session) redirect("/sign-in");
+  const phase = formData.get("phase") === "retest" ? "retest" : "baseline";
+  const date = String(formData.get("date") ?? "");
+  const testId = String(formData.get("testId") ?? "");
+  const index = Number(formData.get("index") ?? "0");
+  const total = Number(formData.get("total") ?? "1");
+  const exerciseId = String(formData.get("exerciseId") ?? "");
+  const resultText = String(formData.get("result") ?? "").trim().slice(0, 80);
+  const db = getDatabase().db;
+  const [test] = await db.select().from(assessmentTests).where(eq(assessmentTests.id, testId)).limit(1);
+  if (test && (exerciseId || resultText)) {
+    let level: number | null = null;
+    if (exerciseId) {
+      const [exercise] = await db.select().from(exercises).where(eq(exercises.id, exerciseId)).limit(1);
+      if (exercise && exercise.patternId === test.patternId) {
+        level = exercise.level;
+        await db.insert(levelEvents).values({
+          id: crypto.randomUUID(),
+          userId: session.user.id,
+          patternId: exercise.patternId,
+          toExerciseId: exercise.id,
+          reason: phase === "retest" ? "baseline" : "baseline",
+          at: new Date(),
+        });
+      }
+    }
+    await db
+      .insert(assessments)
+      .values({
+        id: crypto.randomUUID(),
+        userId: session.user.id,
+        testId: test.id,
+        phase,
+        level,
+        resultText: resultText || null,
+        resultValue: Number.isFinite(Number(resultText)) && resultText !== "" ? Number(resultText) : null,
+      })
+      .onConflictDoUpdate({
+        target: [assessments.userId, assessments.testId, assessments.phase],
+        set: {
+          level,
+          resultText: resultText || null,
+          resultValue: Number.isFinite(Number(resultText)) && resultText !== "" ? Number(resultText) : null,
+          recordedAt: new Date(),
+        },
+      });
+  }
+  const next = index + 1;
+  const target = isIsoDate(date) ? `/today?on=${date}` : "/today";
+  redirect(next >= total ? `${target}&saved=1` : `${target}&test=${next}`);
+}
+
+export async function saveWorkoutPrefs(formData: FormData) {
+  const session = await currentSession();
+  if (!session) redirect("/sign-in");
+  const profile = await currentProfile(session.user.id);
+  const current = readWorkoutPrefs(profile?.prefs);
+  const rest = formData.get("restTimer");
+  const prefs = {
+    ...((profile?.prefs as Record<string, unknown> | null) ?? {}),
+    reduceMotion: current.reduceMotion,
+    restTimer: rest === "longest" || rest === "off" ? rest : "shortest",
+    holdLeadIn: formData.get("holdLeadIn") === "on",
+    vibrate: formData.get("vibrate") === "on",
+    keepScreenOn: formData.get("keepScreenOn") === "on",
+  };
+  await getDatabase().db.update(athleteProfiles).set({ prefs }).where(eq(athleteProfiles.userId, session.user.id));
+  revalidatePath("/settings");
+  revalidatePath("/today");
+  redirect("/settings");
 }
 
 export async function sendInvite(formData: FormData) {
