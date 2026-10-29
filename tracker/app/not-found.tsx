@@ -1,12 +1,16 @@
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui/button";
+import { OptionalShell } from "@/components/optional-shell";
+import { PageHeader } from "@/components/ui/page-header";
+import { currentSession } from "@/lib/session";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const session = await currentSession();
   return (
-    <main id="main" tabIndex={-1} className="page">
-      <h1>Page not found</h1>
-      <p>
-        <Link href="/">Go to the tracker</Link>
-      </p>
-    </main>
+    <OptionalShell>
+      <PageHeader title="That page doesn't exist." />
+      <ButtonLink href={session ? "/today" : "/sign-in"} variant="primary">
+        {session ? "Go to Today" : "Sign in"}
+      </ButtonLink>
+    </OptionalShell>
   );
 }

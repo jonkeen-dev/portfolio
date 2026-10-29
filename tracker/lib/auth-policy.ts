@@ -28,4 +28,5 @@ export function decideRegistration(input: {
   return { ok: false };
 }
 
-export const NEUTRAL_AUTH_MESSAGE = "If this address can sign in, a link is on its way.";
+export const NEUTRAL_AUTH_MESSAGE =
+  "Check your email. If this address has access, there's a sign-in link waiting. It works for 10 minutes.";

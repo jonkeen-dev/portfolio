@@ -6,22 +6,38 @@ import { expect, test, type Page } from "@playwright/test";
 mkdirSync("/opt/cursor/artifacts", { recursive: true });
 
 async function expectAccessible(page: Page, name: string) {
-  const results = await new AxeBuilder({ page })
-    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
-    .analyze();
-  const serious = results.violations.filter((item) => item.impact === "serious" || item.impact === "critical");
-  expect(serious, `${name}\n${JSON.stringify(serious, null, 2)}`).toEqual([]);
+  for (const scheme of ["dark", "light"] as const) {
+    await page.emulateMedia({ colorScheme: scheme });
+    const root = page.locator("html");
+    if (scheme === "light") {
+      await expect(root).toHaveClass(/\blight\b/);
+      await expect(root).not.toHaveClass(/\bdark\b/);
+    } else {
+      await expect(root).toHaveClass(/\bdark\b/);
+      await expect(root).not.toHaveClass(/\blight\b/);
+    }
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+      .analyze();
+    const serious = results.violations.filter((item) => item.impact === "serious" || item.impact === "critical");
+    expect(serious, `${name} ${scheme}\n${JSON.stringify(serious, null, 2)}`).toEqual([]);
+  }
+  await page.emulateMedia({ colorScheme: "dark" });
 }
 
 test("sign in, log a workout, level up, and publish a profile", async ({ page, request }) => {
   await page.goto("/sign-in");
-  await expect(page.getByRole("heading", { name: "Sign in" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Calisthenics Tracker" })).toBeVisible();
   await page.screenshot({ path: "/opt/cursor/artifacts/sign-in.png", fullPage: true });
   await expectAccessible(page, "sign-in");
 
   await page.getByLabel("Email").fill("owner@example.com");
   await page.getByRole("button", { name: "Email me a sign-in link" }).click();
-  await expect(page.getByText("If this address can sign in, a link is on its way.")).toBeVisible();
+  await expect(
+    page.getByText(
+      "Check your email. If this address has access, there's a sign-in link waiting. It works for 10 minutes.",
+    ),
+  ).toBeVisible();
 
   let link = "";
   await expect
@@ -35,6 +51,7 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
 
   await page.goto(link);
   await page.waitForURL(/\/setup/);
+  await expectAccessible(page, "setup");
   await page.getByLabel("Start date").fill("2026-10-12");
   await page.getByRole("button", { name: "Save setup" }).click();
   await page.waitForURL(/\/today/);
@@ -51,9 +68,9 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
   await expectAccessible(page, "today");
 
   for (const setNumber of [1, 2, 3]) {
-    await page.getByRole("button", { name: `Box Squat set ${setNumber}` }).click();
+    await page.getByRole("button", { name: `Box Squat, set ${setNumber}`, exact: true }).click();
     const dialog = page.getByRole("dialog");
-    await expect(dialog.getByRole("spinbutton", { name: "Reps or seconds" })).toHaveValue("12");
+    await expect(dialog.getByRole("spinbutton", { name: "Reps" })).toHaveValue("12");
     if (setNumber === 1) await expectAccessible(page, "set dialog");
     await dialog.getByRole("button", { name: "Save set" }).click();
     await expect(dialog).toBeHidden();
@@ -84,6 +101,7 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
 
   await page.goto("/settings");
   await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
+  await expect(page.getByRole("radio", { name: "Match this device" })).toBeChecked();
   await expect(page.getByText("Dark")).toBeVisible();
   await page.screenshot({ path: "/opt/cursor/artifacts/settings.png", fullPage: true });
   await expectAccessible(page, "settings");
@@ -94,7 +112,7 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
   await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
 
   await page.goto("/u/owner");
-  await expect(page.getByText("Read-only")).toBeVisible();
+  await expect(page.getByText("View only")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Stats" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Set log" })).toHaveCount(0);
   await expect(page.getByText("owner@example.com")).toHaveCount(0);
@@ -117,6 +135,20 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
     headers: { origin: "http://127.0.0.1:3100" },
   });
   expect(denied.status()).toBe(401);
+
+  await page.goto("/help");
+  await expect(page.getByRole("heading", { name: "Help" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
+  await expectAccessible(page, "help");
+
+  await page.goto("/privacy");
+  await expect(page.getByRole("heading", { name: "Privacy" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
+  await expectAccessible(page, "privacy");
+
+  await page.goto("/partner");
+  await expect(page.getByRole("heading", { name: "Partner" })).toBeVisible();
+  await expectAccessible(page, "partner");
 
   await page.context().clearCookies();
   await page.goto("/today");

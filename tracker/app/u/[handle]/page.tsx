@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { adherencePercent } from "@/lib/engine/analytics";
 import { createDal } from "@/lib/db/access";
 import { getDatabase } from "@/lib/db";
+import { formatCalendarDate } from "@/lib/format";
 
 type Params = { handle: string };
 
@@ -36,7 +37,9 @@ export default async function PublicProfilePage({ params }: { params: Promise<Pa
   return (
     <main id="main" tabIndex={-1} className="page">
       <h1>{name}</h1>
-      <p>Read-only</p>
+      <p>
+        <span className="tag">View only</span>
+      </p>
       {profile.email ? <p>{profile.email}</p> : null}
       {profile.stats ? (
         <section className="card" aria-labelledby="stats">
@@ -75,7 +78,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<Pa
             <tbody>
               {profile.logs.map((log) => (
                 <tr key={`${log.date}-${log.exerciseName}`}>
-                  <td>{log.date}</td>
+                  <td>{formatCalendarDate(log.date)}</td>
                   <td>{log.exerciseName}</td>
                   <td>{log.sets.join(", ")}</td>
                 </tr>

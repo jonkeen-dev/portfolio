@@ -1,8 +1,10 @@
 import { adherencePercent, insights } from "@/lib/engine/analytics";
 import { createDal } from "@/lib/db/access";
 import { getDatabase } from "@/lib/db";
+import { formatCalendarDate } from "@/lib/format";
 import { currentProfile, currentSession } from "@/lib/session";
 import { todayIso } from "@/lib/today";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Progress" };
 
@@ -31,9 +33,9 @@ export default async function ProgressPage() {
 
   return (
     <>
-      <h1>Progress</h1>
+      <PageHeader title="Progress" />
       <p>{summary}</p>
-      <dl className="card">
+      <dl className="stats">
         <div>
           <dt>Sessions</dt>
           <dd>
@@ -97,11 +99,11 @@ export default async function ProgressPage() {
       <ul>
         {records.map((row) => (
           <li key={row.exerciseId}>
-            {row.exerciseName}: {row.bestSet} on {row.bestSetDate}
+            {row.exerciseName}: {row.bestSet} on {formatCalendarDate(row.bestSetDate)}
           </li>
         ))}
       </ul>
-      <p className="muted">Showing training through {asOf}. The chart stops at the latest week with a session.</p>
+      <p className="muted">Showing training through {formatCalendarDate(asOf)}. The chart stops at the latest week with a session.</p>
     </>
   );
 }

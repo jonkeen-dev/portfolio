@@ -1,7 +1,12 @@
 import { acceptLevel, completeSession, saveAssessment } from "@/lib/actions";
+import { sessionDoneLine } from "@/lib/copy";
 import { currentProfile, currentSession } from "@/lib/session";
 import { loadToday, todayIso } from "@/lib/today";
 import { isIsoDate } from "@/lib/validators";
+import { ButtonLink } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
+import { ProgressSegments } from "@/components/ui/progress-segments";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 import { Logger } from "./logger";
 
@@ -13,40 +18,46 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
   const profile = await currentProfile(session.user.id);
   if (!profile) return null;
   const query = await searchParams;
-  const requested = query.on && isIsoDate(query.on) ? query.on : todayIso(profile.timezone);
+  const today = todayIso(profile.timezone);
+  const requested = query.on && isIsoDate(query.on) ? query.on : today;
   const model = await loadToday(session.user.id, requested);
   if (!model) return null;
   const ready = model.completed
     ? model.suggestions.filter((item) => item.status === "READY" && item.suggestedExerciseId && item.suggestedName)
     : [];
+  const doneCount = model.items.filter((item) => item.logged.every((value) => typeof value === "number")).length;
+  const eyebrow = [`Week ${model.week}`, model.phaseName, model.day ? `Day ${model.day}` : null].filter(Boolean).join(" · ");
 
   return (
     <>
-      <h1>Today</h1>
+      <PageHeader eyebrow={eyebrow || undefined} title="Today" />
       <form className="row" action="/today" method="get">
         <label htmlFor="on">
           Session date
           <input id="on" name="on" type="date" defaultValue={model.date} />
         </label>
-        <button className="tap" type="submit">
+        <SubmitButton variant="secondary" pendingLabel="Showing…">
           Show date
-        </button>
+        </SubmitButton>
+        {model.date !== today ? <ButtonLink href="/today">Back to today</ButtonLink> : null}
       </form>
       {query.error ? (
         <p className="alert" role="alert">
           {query.error}
         </p>
       ) : null}
-      <p>
-        Week {model.week}
-        {model.phaseName ? ` · ${model.phaseName}` : ""}
-        {model.day ? ` · Day ${model.day}` : ""}
-      </p>
       <h2>{model.title}</h2>
+      {model.items.length > 0 ? (
+        <ProgressSegments
+          done={doneCount}
+          total={model.items.length}
+          label={`${doneCount} of ${model.items.length} exercises done`}
+        />
+      ) : null}
       {model.focus ? <p>{model.focus}</p> : null}
-      {model.outside ? <p>That date is outside this 12-week program.</p> : null}
-      {model.rest && !model.outside ? <p>Rest day. Easy walking is plenty.</p> : null}
-      {model.isDeload ? <p>Deload week. Level-ups are on hold.</p> : null}
+      {model.outside ? <p>This date is outside your 12 weeks.</p> : null}
+      {model.rest && !model.outside ? <p>Nothing planned today. A walk is a good idea.</p> : null}
+      {model.isDeload ? <p>Lighter week, so level-ups wait until next week.</p> : null}
       {model.coachNote ? <p className="muted">{model.coachNote}</p> : null}
 
       {ready.map((item) => {
@@ -69,9 +80,7 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
                 <input type="hidden" name="patternId" value={item.patternId} />
                 <input type="hidden" name="toExerciseId" value={item.suggestedExerciseId ?? ""} />
                 <input type="hidden" name="next" value={`/today?on=${model.date}`} />
-                <button className="tap primary" type="submit">
-                  Accept {item.suggestedName}
-                </button>
+                <SubmitButton>Accept {item.suggestedName}</SubmitButton>
               </form>
             )}
           </section>
@@ -80,8 +89,8 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
 
       {model.prep.length > 0 ? (
         <details className="card">
-          <summary className="tap">Warm-up and cool-down</summary>
-          <ul>
+          <summary>Warm-up and cool-down</summary>
+          <ul className="prose-list">
             {model.prep.map((entry) => (
               <li key={`${entry.name}-${entry.detail}`}>
                 {entry.name}
@@ -122,19 +131,12 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
               </label>
             </fieldset>
           ))}
-          <button className="tap primary" type="submit">
-            Save assessment
-          </button>
+          <SubmitButton>Save assessment</SubmitButton>
         </form>
       ) : null}
 
       {model.items.length > 0 ? (
-        <Logger
-          date={model.date}
-          day={model.day}
-          sessionType={model.sessionType}
-          items={model.items}
-        />
+        <Logger date={model.date} day={model.day} sessionType={model.sessionType} items={model.items} />
       ) : null}
 
       {model.items.length > 0 && !model.completed ? (
@@ -152,12 +154,10 @@ export default async function TodayPage({ searchParams }: { searchParams: Promis
               <option value="5">5, great</option>
             </select>
           </label>
-          <button className="tap primary" type="submit">
-            Finish session
-          </button>
+          <SubmitButton>Finish session</SubmitButton>
         </form>
       ) : null}
-      {model.completed ? <p>Session finished. Suggestions use every log through this date.</p> : null}
+      {model.completed ? <p>{sessionDoneLine(model.items)}</p> : null}
     </>
   );
 }

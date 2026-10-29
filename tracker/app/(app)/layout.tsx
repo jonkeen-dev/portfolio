@@ -15,7 +15,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div data-reduce-motion={prefs.reduceMotion ? "1" : "0"}>
       <Shell path={path} showNav={Boolean(profile)}>
-        <main id="main" tabIndex={-1} className="page">
+        <main id="main" tabIndex={-1} className={profile ? "page page-with-nav" : "page"}>
           {children}
         </main>
       </Shell>

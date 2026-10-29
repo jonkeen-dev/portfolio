@@ -1,6 +1,10 @@
 import { asc } from "drizzle-orm";
 
+import { SubmitButton } from "@/components/ui/submit-button";
+import { MiniLadder } from "@/components/ui/mini-ladder";
+import { PageHeader } from "@/components/ui/page-header";
 import { setLevelManually } from "@/lib/actions";
+import { movementStatusLine } from "@/lib/copy";
 import { createDal } from "@/lib/db/access";
 import { getDatabase } from "@/lib/db";
 import { exercises, patterns } from "@/lib/db/schema";
@@ -30,8 +34,10 @@ export default async function LaddersPage({ searchParams }: { searchParams: Prom
 
   return (
     <>
-      <h1>Ladders</h1>
-      <p>Move up only after two sessions at the top of the range. You can also set a level yourself.</p>
+      <PageHeader
+        title="Ladders"
+        description="Two sessions at the top of the range moves you up a rung. You can also choose a level yourself."
+      />
       {error ? (
         <p className="alert" role="alert">
           {error}
@@ -46,28 +52,30 @@ export default async function LaddersPage({ searchParams }: { searchParams: Prom
             row.equipment !== "kettlebell" &&
             (profile.hasBar || row.equipment !== "bar"),
         );
+        const rungTotal = ladder.reduce((max, row) => Math.max(max, row.level), 1);
         return (
           <section key={patternId} className="card" aria-labelledby={`ladder-${patternId}`}>
-            <h2 id={`ladder-${patternId}`}>{names.get(patternId) ?? patternId}</h2>
+            <div className="exercise-head">
+              <MiniLadder level={current?.level ?? 0} total={rungTotal} />
+              <h2 className="row-title" id={`ladder-${patternId}`}>
+                {names.get(patternId) ?? patternId}
+              </h2>
+            </div>
             {current ? (
               <p>
-                Current: {current.exerciseName} (level {current.level})
+                Current: {current.exerciseName} (level {current.level} of {rungTotal})
               </p>
             ) : (
               <p className="muted">No level chosen yet. The plan starts at the first rung.</p>
             )}
             {suggestion ? (
               <p>
-                {suggestion.status === "READY"
-                  ? "Ready to level up"
-                  : suggestion.status === "HOLD"
-                    ? "Hold"
-                    : suggestion.status === "NOT_YET"
-                      ? "Not yet"
-                      : "No sessions yet"}
-                . {suggestion.reason}
-                {suggestion.suggestedName ? ` Next: ${suggestion.suggestedName}.` : ""}
-                {suggestion.tooHard ? ` ${suggestion.tooHard.message}` : ""}
+                {movementStatusLine({
+                  status: suggestion.status,
+                  reason: suggestion.reason,
+                  suggestedName: suggestion.suggestedName,
+                  tooHardMessage: suggestion.tooHard?.message,
+                })}
               </p>
             ) : null}
             <ol>
@@ -75,14 +83,14 @@ export default async function LaddersPage({ searchParams }: { searchParams: Prom
                 <li key={row.id}>
                   Level {row.level}: {row.name}
                   {current?.exerciseId === row.id ? " (current)" : ""}
-                  {row.equipment === "bar" ? " — bar" : ""}
+                  {row.equipment === "bar" ? " · needs a bar" : ""}
                 </li>
               ))}
             </ol>
             <form className="stack" action={setLevelManually}>
               <input type="hidden" name="patternId" value={patternId} />
               <label htmlFor={`pick-${patternId}`}>
-                Set level manually
+                Choose a level myself
                 <select id={`pick-${patternId}`} name="exerciseId" defaultValue={current?.exerciseId ?? ladder[0]?.id}>
                   {ladder.map((row) => (
                     <option key={row.id} value={row.id}>
@@ -91,9 +99,7 @@ export default async function LaddersPage({ searchParams }: { searchParams: Prom
                   ))}
                 </select>
               </label>
-              <button className="tap" type="submit">
-                Save {names.get(patternId) ?? "level"}
-              </button>
+              <SubmitButton variant="secondary">Save {names.get(patternId) ?? "level"}</SubmitButton>
             </form>
           </section>
         );

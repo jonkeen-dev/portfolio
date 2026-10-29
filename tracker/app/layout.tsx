@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import Link from "next/link";
 
 import { FlushQueue } from "@/components/flush-queue";
 import { Providers } from "@/components/providers";
@@ -26,10 +25,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <a className="skip" href="#main">
             Skip to content
           </a>
-          <header className="topbar">
-            <Link href="/">Calisthenics Tracker</Link>
-            <Link href="/help#rir">What does RIR mean?</Link>
-          </header>
           {children}
           <SwRegister />
           <FlushQueue />
