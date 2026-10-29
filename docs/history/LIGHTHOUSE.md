@@ -26,7 +26,7 @@
    - /projects/paletteforge
    - /roadmap
 3. Or CLI: `npx lighthouse http://localhost:3000 --preset=mobile --view` (repeat for key routes).
-4. Also run Google PageSpeed Insights on https://jonkeen.dev after deploy + LinkedIn/Twitter card validators for OG.
+4. Also run Google PageSpeed Insights on https://www.jonkeen.dev after deploy + LinkedIn/Twitter card validators for OG.
 
 **Target (per plan):** All categories ≥90 (mobile hardest). Aim 95-100 where low effort. OG image + metadata were the primary missing pieces for SEO + "Best Practices / PWA-adjacent".
 

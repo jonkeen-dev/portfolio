@@ -25,7 +25,7 @@ const links = [
 export default function Footer() {
   return (
     <footer className="border-border/30 mt-32 border-t">
-      <div className="mx-auto max-w-6xl px-6 py-8">
+      <div className="mx-auto max-w-5xl px-6 py-8">
         <nav aria-label="Contact links" className="flex justify-center gap-6">
           {links.map(({ href, label, icon: Icon }) => (
             <MotionIconLink
@@ -34,7 +34,7 @@ export default function Footer() {
               aria-label={label}
               target={href.startsWith("mailto:") ? undefined : "_blank"}
               rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-              className="text-foreground-muted hover:text-foreground transition-colors"
+              className="text-foreground-secondary hover:text-accent-bright transition-colors"
             >
               <Icon size={20} />
             </MotionIconLink>

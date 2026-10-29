@@ -1,0 +1,468 @@
+{
+  "schema_version": "1.0",
+  "program": {
+    "id": "ct-12",
+    "title": "Calisthenics Tracker",
+    "subtitle": "A 12-week beginner calisthenics program",
+    "version": "1.0",
+    "prepared_for": "Jonathan Keen",
+    "date": "October 2026",
+    "weeks": 12,
+    "sessions_per_week": 3,
+    "session_minutes": "25-45",
+    "equipment_policy": "Bodyweight only. Every session works with zero equipment; a pull-up bar is optional.",
+    "audience": "True beginners and people returning to exercise"
+  },
+  "equipment_types": [
+    "none",
+    "bar",
+    "kettlebell"
+  ],
+  "equipment_list": [
+    {
+      "item": "Floor space about 6 x 6 ft (2 x 2 m)",
+      "required": true
+    },
+    {
+      "item": "Towel or exercise mat",
+      "required": true
+    },
+    {
+      "item": "Sturdy chair (placed against a wall)",
+      "required": true
+    },
+    {
+      "item": "Wall and a solid doorframe",
+      "required": true
+    },
+    {
+      "item": "Heavy, sturdy table for rows (not folding or glass)",
+      "required": false,
+      "note": "If you have no safe table, stay on doorframe rows."
+    },
+    {
+      "item": "Pull-up bar",
+      "required": false,
+      "note": "Optional. Every pull level has a no-bar option."
+    },
+    {
+      "item": "Timer or phone, pencil",
+      "required": true
+    }
+  ],
+  "phases": [
+    {
+      "id": "foundation",
+      "name": "Foundation",
+      "weeks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "goal": "Learn the movements, find your levels, build the habit.",
+      "deload_week": 4
+    },
+    {
+      "id": "build",
+      "name": "Build",
+      "weeks": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "goal": "More sets and slower lowering to build muscle and control.",
+      "deload_week": 8
+    },
+    {
+      "id": "strength",
+      "name": "Strength",
+      "weeks": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "goal": "Harder levels with fewer reps, then retest in Week 12.",
+      "retest_week": 12
+    }
+  ],
+  "patterns": [
+    {
+      "id": "push",
+      "name": "Push",
+      "muscles": "Chest, shoulders, triceps"
+    },
+    {
+      "id": "pull",
+      "name": "Pull",
+      "muscles": "Upper back, biceps, grip"
+    },
+    {
+      "id": "squat",
+      "name": "Squat",
+      "muscles": "Thighs, glutes"
+    },
+    {
+      "id": "hinge",
+      "name": "Hinge",
+      "muscles": "Glutes, hamstrings, lower back"
+    },
+    {
+      "id": "core",
+      "name": "Core",
+      "muscles": "Abdominals (front)"
+    },
+    {
+      "id": "lateral_core",
+      "name": "Side Core",
+      "muscles": "Obliques, hips"
+    }
+  ],
+  "schedule": {
+    "days": [
+      {
+        "day": "A",
+        "weekday": "Mon",
+        "label": "Day A"
+      },
+      {
+        "day": "B",
+        "weekday": "Wed",
+        "label": "Day B"
+      },
+      {
+        "day": "C",
+        "weekday": "Fri",
+        "label": "Day C"
+      }
+    ],
+    "note": "Any 3 non-consecutive days work (e.g. Tue/Thu/Sat). Leave at least one rest day between sessions. A 20-30 minute walk on rest days is encouraged but optional."
+  },
+  "session_template": {
+    "warmup": [
+      "WU1",
+      "WU2",
+      "WU3",
+      "WU4",
+      "WU5",
+      "WU6"
+    ],
+    "cooldown": [
+      "CD1",
+      "CD2",
+      "CD3",
+      "CD4",
+      "CD5",
+      "CD6"
+    ],
+    "warmup_minutes": 6,
+    "cooldown_minutes": 5,
+    "ramp_up_note": "Before your first pair, do one easy set of 5 reps of each exercise one level easier.",
+    "pairing_note": "Do the exercises in each pair back-to-back: one set of A1, rest, one set of A2, rest, repeat until all sets are done. Then move to pair B.",
+    "days": {
+      "A": [
+        {
+          "block": "A1",
+          "pattern": "squat"
+        },
+        {
+          "block": "A2",
+          "pattern": "push"
+        },
+        {
+          "block": "B1",
+          "pattern": "hinge"
+        },
+        {
+          "block": "B2",
+          "pattern": "pull"
+        },
+        {
+          "block": "C",
+          "pattern": "core"
+        }
+      ],
+      "B": [
+        {
+          "block": "A1",
+          "pattern": "squat"
+        },
+        {
+          "block": "A2",
+          "pattern": "push"
+        },
+        {
+          "block": "B1",
+          "pattern": "hinge"
+        },
+        {
+          "block": "B2",
+          "pattern": "pull"
+        },
+        {
+          "block": "C",
+          "pattern": "lateral_core"
+        }
+      ],
+      "C": [
+        {
+          "block": "A1",
+          "pattern": "squat"
+        },
+        {
+          "block": "A2",
+          "pattern": "push"
+        },
+        {
+          "block": "B1",
+          "pattern": "hinge"
+        },
+        {
+          "block": "B2",
+          "pattern": "pull"
+        },
+        {
+          "block": "C",
+          "pattern": "core"
+        }
+      ]
+    }
+  },
+  "default_track": {
+    "_note": "Suggested exercise for a typical true beginner in each phase. The user's own level (from the baseline test and level-ups) always overrides this.",
+    "foundation": {
+      "push": "PU2",
+      "pull": "PL1",
+      "squat": "SQ1",
+      "hinge": "HI1",
+      "core": "CO1",
+      "lateral_core": "LC1"
+    },
+    "build": {
+      "push": "PU3",
+      "pull": "PL2",
+      "squat": "SQ2",
+      "hinge": "HI2",
+      "core": "CO2",
+      "lateral_core": "LC2"
+    },
+    "strength": {
+      "push": "PU4",
+      "pull": "PL3",
+      "squat": "SQ3",
+      "hinge": "HI3",
+      "core": "CO3",
+      "lateral_core": "LC2"
+    }
+  },
+  "special_sessions": [
+    {
+      "week": 1,
+      "day": "A",
+      "type": "assessment",
+      "title": "Baseline assessment",
+      "note": "Do the warm-up, then the baseline tests on the Assessment Sheet instead of a workout."
+    },
+    {
+      "week": 12,
+      "day": "C",
+      "type": "retest",
+      "title": "Week 12 retest",
+      "note": "Do the warm-up, then repeat every test on the Assessment Sheet. Compare with Week 1."
+    }
+  ],
+  "progression_rules": [
+    {
+      "id": "R1",
+      "title": "Earn the next level",
+      "text": "When you reach the TOP of the rep range on ALL sets with good form in two sessions in a row, move up one level next session. Start the new level at the bottom of the range."
+    },
+    {
+      "id": "R2",
+      "title": "Timed holds work the same way",
+      "text": "Hold the top of the time range on all sets in two sessions in a row, then move up one level."
+    },
+    {
+      "id": "R3",
+      "title": "Too hard? Step down",
+      "text": "If you cannot reach the bottom of the rep range on your first set with good form, drop one level (or use the 'Easier' option) for the rest of the session."
+    },
+    {
+      "id": "R4",
+      "title": "Leave reps in the tank",
+      "text": "Stop each set when you have the week's target reps in reserve (RIR). Never train to failure in this program."
+    },
+    {
+      "id": "R5",
+      "title": "Form first",
+      "text": "A rep only counts if it matches the form cues. If form breaks down, the set is over."
+    },
+    {
+      "id": "R6",
+      "title": "Deload weeks",
+      "text": "In Weeks 4 and 8, keep your level, do fewer sets, and do not level up."
+    },
+    {
+      "id": "R7",
+      "title": "Missed sessions",
+      "text": "Missed one session? Just continue. Missed a full week or more? Repeat the last week you completed. Never cram extra sessions."
+    },
+    {
+      "id": "R8",
+      "title": "Soreness check",
+      "text": "Mild soreness for 1-2 days is normal. If soreness lasts more than 3 days or changes how you move, repeat the current week instead of moving on."
+    }
+  ],
+  "effort_scale": [
+    {
+      "rir": "4+",
+      "rpe": "5-6",
+      "feel": "Easy. Could do 4 or more extra reps."
+    },
+    {
+      "rir": "3",
+      "rpe": "7",
+      "feel": "Moderate. Three good reps left."
+    },
+    {
+      "rir": "2",
+      "rpe": "8",
+      "feel": "Hard. Two good reps left."
+    },
+    {
+      "rir": "1",
+      "rpe": "9",
+      "feel": "Very hard. One good rep left."
+    },
+    {
+      "rir": "0",
+      "rpe": "10",
+      "feel": "Max effort. Not used in this program."
+    }
+  ],
+  "safety": {
+    "disclaimer": "This program is general fitness information, not medical advice. It is not a substitute for advice from a doctor or other qualified health professional. Talk to your doctor before starting any new exercise program, especially if you have a medical condition, an injury, are pregnant or postpartum, or have been inactive for a long time. You exercise at your own risk.",
+    "readiness_questions": [
+      "Has a doctor ever said you have a heart condition or high blood pressure?",
+      "Do you feel pain in your chest at rest, during daily activities, or when you exercise?",
+      "Do you lose balance because of dizziness, or have you lost consciousness recently?",
+      "Do you have a bone, joint or soft-tissue problem that could be made worse by exercise?",
+      "Are you taking medication for a chronic condition, or has a doctor told you to limit activity?"
+    ],
+    "readiness_note": "If you answer YES to any question, get clearance from your doctor before starting. Screening questionnaires such as the PAR-Q+ can help you and your doctor decide.",
+    "stop_signs": [
+      "Chest pain, pressure or tightness",
+      "Dizziness, faintness or nausea",
+      "Unusual shortness of breath",
+      "Sharp, stabbing or joint pain",
+      "Numbness or tingling",
+      "Pain that gets worse as you continue"
+    ],
+    "normal_signs": [
+      "Muscles burning near the end of a set",
+      "Breathing harder",
+      "Mild muscle soreness for 1-2 days"
+    ],
+    "general_tips": [
+      "Breathe out on the effort; never hold your breath.",
+      "Wear supportive shoes or go barefoot on a non-slip surface.",
+      "Test any chair, table, bench or bar before you put weight on it.",
+      "Clear the area of trip hazards and pets.",
+      "Drink water and stop if you feel unwell."
+    ]
+  },
+  "tiers": [
+    {
+      "id": "starter",
+      "name": "Starter",
+      "summary": "Building the basics"
+    },
+    {
+      "id": "beginner",
+      "name": "Beginner",
+      "summary": "Solid foundation"
+    },
+    {
+      "id": "intermediate",
+      "name": "Intermediate",
+      "summary": "Strong bodyweight base"
+    }
+  ],
+  "tier_benchmarks": {
+    "push": {
+      "starter": "Wall or high incline push-ups",
+      "beginner": "8+ low incline or knee push-ups",
+      "intermediate": "10+ full push-ups"
+    },
+    "pull": {
+      "starter": "Doorframe rows",
+      "beginner": "8+ table rows (bent or straight legs)",
+      "intermediate": "8+ feet-elevated table rows or 3+ pull-up negatives"
+    },
+    "squat": {
+      "starter": "Squats to a chair",
+      "beginner": "15+ bodyweight squats",
+      "intermediate": "8+ per side rear-foot-elevated split squats"
+    },
+    "hinge": {
+      "starter": "Glute bridges",
+      "beginner": "15+ couch hip thrusts",
+      "intermediate": "10+ per side single-leg hip thrusts"
+    },
+    "core": {
+      "starter": "Dead bugs or plank under 20 s",
+      "beginner": "30-45 s forearm plank",
+      "intermediate": "30 s hollow body hold"
+    },
+    "lateral_core": {
+      "starter": "Knee side plank",
+      "beginner": "30 s side plank each side",
+      "intermediate": "30 s side plank with leg lift"
+    }
+  },
+  "goal_options": [
+    "Get stronger overall",
+    "Do my first full push-up",
+    "Do my first pull-up",
+    "Move and feel better day to day",
+    "Build a 3-day-a-week habit",
+    "Improve body composition",
+    "More energy",
+    "Support my sport or hobby"
+  ],
+  "tracker_milestones": [
+    {
+      "day": 1,
+      "label": "Baseline done"
+    },
+    {
+      "week": 4,
+      "label": "Foundation complete"
+    },
+    {
+      "week": 6,
+      "label": "Halfway"
+    },
+    {
+      "week": 8,
+      "label": "Build complete"
+    },
+    {
+      "week": 12,
+      "label": "Program complete + retest"
+    },
+    {
+      "event": "first_level_up",
+      "label": "First level-up"
+    }
+  ],
+  "next_steps": [
+    "Repeat Weeks 9-12 at your new levels for another 4-week strength block.",
+    "Or restart the program at Week 5 using your new levels.",
+    "Keep climbing the ladders: stretch goals are full push-ups, decline push-ups, pull-ups and assisted pistols.",
+    "Add a fourth short session (core + mobility) if you have time and recover well.",
+    "Coming next: an Excel workbook with automatic level-up suggestions and progress charts."
+  ]
+}

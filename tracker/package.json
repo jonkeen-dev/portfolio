@@ -1,0 +1,50 @@
+{
+  "name": "calisthenics-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:seed": "tsx scripts/seed.ts",
+    "db:setup": "tsx scripts/migrate.ts && tsx scripts/seed.ts",
+    "e2e": "playwright test",
+    "e2e:serve": "tsx scripts/prepare-e2e.ts && next start --hostname 127.0.0.1 --port ${PORT:-3100}",
+    "check": "npm run lint && npm run typecheck && npm run test && npm run build"
+  },
+  "dependencies": {
+    "@better-auth/passkey": "^1.7.13",
+    "@electric-sql/pglite": "^0.3.14",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "better-auth": "^1.7.13",
+    "drizzle-orm": "^0.45.2",
+    "lucide-react": "^0.545.0",
+    "next": "^16.2.6",
+    "next-themes": "^0.4.6",
+    "postgres": "^3.4.7",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "resend": "^6.2.2",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
+    "@playwright/test": "^1.56.1",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.5",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.6",
+    "tailwindcss": "^4",
+    "tsx": "^4.20.6",
+    "typescript": "^5",
+    "vitest": "^3.2.4"
+  }
+}

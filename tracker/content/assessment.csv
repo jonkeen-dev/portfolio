@@ -1,0 +1,10 @@
+test_id,order,name,pattern,type,protocol,record,unit,cap
+T1,1,Push level test,push,ladder,"Start at the push level you think is easy. Do one set of as many good-form reps as you can. If you reach the cap, rest 2 min and try the next level. Maximum 3 attempts.",Hardest level with 8+ good reps and the reps you got,reps,15
+T2,2,Pull level test,pull,ladder,"Same as the push test using the pull ladder. Use the no-bar track unless you have a pull-up bar.",Hardest level with 8+ good reps and the reps you got,reps,15
+T3,3,Squat level test,squat,ladder,"Same as the push test using the squat ladder. For one-leg levels, test your weaker side.",Hardest level with 8+ good reps and the reps you got,reps,15
+T4,4,Hinge level test,hinge,ladder,"Same as the push test using the hinge ladder. Hinge moves are easier, so the cap is 20.",Hardest level with 8+ good reps and the reps you got,reps,20
+T5,5,Forearm plank hold,core,hold,"Hold a forearm plank with good form. Stop when your hips sag or pike. Under 20 s: start core at Dead Bug. 20-45 s: start at Forearm Plank. Over 45 s: try Tuck Hollow Hold.",Seconds held,seconds,90
+T6,6,Side plank hold,lateral_core,hold,"Hold a knee side plank (or full side plank if easy) on each side. Under 30 s: start at Knee Side Plank. 30 s or more on a full side plank: start at Side Plank.",Seconds held per side and which version,seconds,60
+M1,7,Deep squat check,mobility,check,"Squat as low as is comfortable with heels down and hold 20 s.","Depth: above parallel / parallel / below",choice,
+M2,8,Toe-touch reach,mobility,check,"Stand tall, knees straight, slowly reach toward your toes. Do not bounce.","Reached: knees / shins / ankles / toes / floor",choice,
+M3,9,Overhead wall reach,mobility,check,"Stand with back, head and heels against a wall. Raise straight arms overhead without arching your back.",Thumbs touch the wall? yes / no,choice,

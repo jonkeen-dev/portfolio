@@ -1,3 +1,4 @@
+tracker
 .next
 out
 build
@@ -6,3 +7,4 @@ next-env.d.ts
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+coverage

@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Not found",
+  description: "This page may not be built yet, or the link might be off.",
+};
 
 export default function NotFound() {
   return (
-    <section className="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-start justify-center px-6 pt-32 pb-16">
+    <section className="mx-auto flex min-h-[60vh] max-w-5xl flex-col items-start justify-center px-6 pt-32 pb-16">
       <p className="text-accent-bright font-mono text-sm">404</p>
       <h1 className="page-h1 mt-3">Nothing here yet.</h1>
       <p className="prose-body mt-4 max-w-md">

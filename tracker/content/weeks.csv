@@ -1,0 +1,13 @@
+week,phase_id,is_deload,is_assessment_week,sets_main,reps_main,sets_core,core_reps_per_side,hold_seconds,target_rir,target_rpe,rest_seconds,tempo,level_ups_allowed,focus,coach_note
+1,foundation,0,1,2,8-12,2,6-8,15-30,3-4,6-7,60-90,"2 s down, 1 s up",1,Find your levels and learn the movements,"Monday is your baseline assessment. Wednesday and Friday: pick the level you found on Monday. Finish every set feeling like you could do 3-4 more reps."
+2,foundation,0,0,2,8-12,2,6-10,20-30,3,7,60-90,"2 s down, 1 s up",1,Own the form,"Same plan, smoother reps. If every set reached 12 clean reps in two sessions, move up one level."
+3,foundation,0,0,3,8-12,3,6-10,20-30,2-3,7,60-90,"2 s down, 1 s up",1,Add a third set,"A third set is new. It is fine if your reps drop a little on the last set."
+4,foundation,1,0,2,8-10,2,6-8,15-25,4,5-6,60,"2 s down, 1 s up",0,Deload: recover and absorb,"Fewer sets, easier effort, no level-ups. Take your time on the cool-down. You should finish feeling fresh."
+5,build,0,0,3,8-12,3,8-10,20-40,2-3,7,60-90,"3 s down, 1 s up",1,Slow the lowering,"New tempo: lower for 3 slow seconds on every rep. It makes each level harder, so reps may drop at first."
+6,build,0,0,3,8-12,3,8-10,20-40,2,7-8,60-90,"3 s down, 1 s up",1,Build strength in the range,"Push a little closer: finish sets with about 2 reps left in the tank."
+7,build,0,0,4,8-12,3,8-10,20-40,1-2,8,60-90,"3 s down, 1 s up",1,Add a fourth set,"Most volume of the program. Keep form perfect; stop a set early before it gets sloppy."
+8,build,1,0,2,8-10,2,6-8,15-30,4,5-6,60,"2 s down, 1 s up",0,Deload: recover and absorb,"Back off on purpose. You are not losing progress; you are letting it sink in."
+9,strength,0,0,3,5-8,3,8-10,20-40,2,8,90-120,"3 s down, 1 s up",1,Harder levels; fewer reps,"New rep range (5-8). If you can do more than 8 at your current level, move up a level now."
+10,strength,0,0,4,5-8,3,8-10,20-40,1-2,8,90-120,"3 s down, 1 s up",1,Strength focus,"Rest fully between sets (90-120 s). Quality reps beat more reps."
+11,strength,0,0,4,5-8,3,8-10,20-40,1,8-9,90-120,"2 s down, 1 s up",1,Peak week,"Your hardest week. Stop each set with about 1 good rep left. Never grind through bad form."
+12,strength,0,1,2,5-8,2,6-8,15-30,3,6-7,90,"2 s down, 1 s up",0,Taper and retest,"Mon and Wed are short and easy so you are fresh. Friday is your retest: compare with Week 1 and celebrate."
