@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
+
 export function VideoFacade({ youtubeId, title, watchUrl }: { youtubeId: string; title: string; watchUrl: string }) {
   const [play, setPlay] = useState(false);
   return (
@@ -15,9 +17,9 @@ export function VideoFacade({ youtubeId, title, watchUrl }: { youtubeId: string;
           allowFullScreen
         />
       ) : (
-        <button className="tap" type="button" onClick={() => setPlay(true)}>
+        <Button type="button" onClick={() => setPlay(true)}>
           Play demo: {title}
-        </button>
+        </Button>
       )}
       <a href={watchUrl}>Open on YouTube</a>
     </div>

@@ -1,5 +1,6 @@
 import { and, isNull, ne } from "drizzle-orm";
 
+import { PageHeader } from "@/components/ui/page-header";
 import { createDal } from "@/lib/db/access";
 import { getDatabase } from "@/lib/db";
 import { user } from "@/lib/db/schema";
@@ -24,12 +25,14 @@ export default async function PartnerPage() {
 
   return (
     <>
-      <h1>Partner</h1>
+      <PageHeader title="Partner" />
       {views.length === 0 ? <p>Nothing has been shared with you.</p> : null}
       {views.map((view) => (
         <article key={view.handle} className="card">
-          <h2>{view.displayName ?? view.handle}</h2>
-          <p>Read-only</p>
+          <h2 className="row-title">{view.displayName ?? view.handle}</h2>
+          <p>
+            <span className="tag">View only</span>
+          </p>
           {view.email ? <p>{view.email}</p> : null}
           {view.stats ? (
             <p>

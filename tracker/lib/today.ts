@@ -12,6 +12,7 @@ import {
   prescriptions,
   sessionTemplates,
   setLogs,
+  patterns,
   weeks,
   workoutSessions,
 } from "@/lib/db/schema";
@@ -39,6 +40,9 @@ export type TodayItem = {
   previous: number[];
   exerciseLogId: string | null;
   rir: number | null;
+  level: number;
+  rungTotal: number;
+  patternName: string;
 };
 
 export type TodayTest = {
@@ -142,10 +146,12 @@ export async function loadToday(userId: string, date: string): Promise<TodayMode
     : [];
   const targets = weekRow ? weekTargets(weekRow) : null;
   const dal = createDal(db);
-  const [suggestions, levels] = await Promise.all([
+  const [suggestions, levels, patternRows] = await Promise.all([
     dal.movementSuggestions(userId, date),
     dal.currentLevels(userId),
+    db.select({ id: patterns.id, name: patterns.name }).from(patterns),
   ]);
+  const patternNames = new Map(patternRows.map((row) => [row.id, row.name]));
 
   const catalog = await db.select().from(exercises).orderBy(asc(exercises.patternId), asc(exercises.level));
   const byId = new Map(catalog.map((row) => [row.id, row]));
@@ -258,6 +264,12 @@ export async function loadToday(userId: string, date: string): Promise<TodayMode
       continue;
     }
     const dose = doseFor(targets, exercise.patternId, exercise.unit);
+    const ladder = catalog.filter(
+      (choice) =>
+        choice.patternId === exercise.patternId &&
+        choice.equipment !== "kettlebell" &&
+        (profile.hasBar || choice.equipment !== "bar"),
+    );
     const log = logs.find((entry) => entry.exerciseId === exercise.id) ?? null;
     const logged: Array<number | null> = Array.from({ length: dose.prescribedSets }, () => null);
     for (const set of setsByLog.get(log?.id ?? "") ?? []) {
@@ -281,6 +293,9 @@ export async function loadToday(userId: string, date: string): Promise<TodayMode
       previous: (previous.get(exercise.id)?.values ?? []).filter((value) => typeof value === "number"),
       exerciseLogId: log?.id ?? null,
       rir: log?.rir ?? null,
+      level: exercise.level,
+      rungTotal: ladder.reduce((max, choice) => Math.max(max, choice.level), 1),
+      patternName: patternNames.get(exercise.patternId) ?? exercise.patternId,
     });
   }
 

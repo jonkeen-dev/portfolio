@@ -1,22 +1,27 @@
+import { OptionalShell } from "@/components/optional-shell";
+import { PageHeader } from "@/components/ui/page-header";
+
 export const metadata = { title: "Help" };
 
 export default function HelpPage() {
   return (
-    <main id="main" tabIndex={-1} className="page">
-      <h1>Help</h1>
+    <OptionalShell>
+      <PageHeader title="Help" />
       <h2 id="rir">What does RIR mean?</h2>
       <p>
         RIR is reps left in the tank. After the last set, say how many good reps you still had. 3 means the set was
         solid and you could have done about three more. 0 means you had nothing left.
       </p>
-      <h2>Level-ups</h2>
+      <h2>How moving up works</h2>
       <p>
-        The app suggests a harder exercise after two sessions where every prescribed set reaches the top of the range.
-        Deload weeks hold you where you are. You choose when to accept.
+        After two sessions where every set reaches the top of the range, a harder exercise is suggested. You choose
+        when to move up.
       </p>
+      <h2>Lighter weeks</h2>
+      <p>Weeks 4 and 8 use fewer sets and easier effort, and level-ups wait. Your progress holds while you recover.</p>
       <p>
         <a href="/privacy">Privacy</a>
       </p>
-    </main>
+    </OptionalShell>
   );
 }

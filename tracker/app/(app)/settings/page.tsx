@@ -1,7 +1,11 @@
 import { and, desc, eq, isNull } from "drizzle-orm";
 
 import { PasskeyButton, SignOutButton, ThemeChooser } from "@/components/account-tools";
+import { ButtonLink } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { deleteAccount, revokeInvite, saveProfile, saveSharing, sendInvite } from "@/lib/actions";
+import { formatCalendarDate, formatInstantDate, formatZonedDateTime } from "@/lib/format";
 import { getDatabase } from "@/lib/db";
 import { auditEvents, invites } from "@/lib/db/schema";
 import { currentProfile, currentSession, userRole } from "@/lib/session";
@@ -36,22 +40,23 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   ]);
   const prefs = (profile.prefs ?? {}) as { reduceMotion?: boolean };
   const sections = new Set(profile.visibleSections);
+  const deleteError = error && (error.includes("DELETE") || error.toLowerCase().includes("delet")) ? error : null;
 
   return (
     <>
-      <h1>Settings</h1>
-      {error ? (
+      <PageHeader title="Settings" />
+      {error && !deleteError ? (
         <p className="alert" role="alert">
           {error}
         </p>
       ) : null}
       <section className="card" aria-labelledby="profile-heading">
         <h2 id="profile-heading">Profile</h2>
-        <p>Program started {profile.startDate}. Units are {profile.units}.</p>
+        <p>Program started {formatCalendarDate(profile.startDate)}. Units are {profile.units}.</p>
         <form className="stack" action={saveProfile}>
           <label htmlFor="displayName">
             Name
-            <input id="displayName" name="displayName" defaultValue={session.user.name} maxLength={80} />
+            <input id="displayName" name="displayName" autoComplete="name" defaultValue={session.user.name} maxLength={80} />
           </label>
           <fieldset>
             <legend>Units</legend>
@@ -68,15 +73,13 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           <label className="choice">
             <input type="checkbox" name="reduceMotion" defaultChecked={Boolean(prefs.reduceMotion)} /> Reduce motion
           </label>
-          <button className="tap" type="submit">
-            Save profile
-          </button>
+          <SubmitButton variant="secondary">Save profile</SubmitButton>
         </form>
       </section>
 
       <section className="card" aria-labelledby="share-heading">
         <h2 id="share-heading">Sharing</h2>
-        <p>Private is the default. A public page is read-only and stays out of search unless you allow indexing.</p>
+        <p>Private is the default. A public page is view only and stays out of search unless you allow indexing.</p>
         <form className="stack" action={saveSharing}>
           <fieldset>
             <legend>Who can look</legend>
@@ -118,9 +121,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           <label className="choice">
             <input type="checkbox" name="allowIndexing" defaultChecked={profile.allowIndexing} /> Allow search indexing
           </label>
-          <button className="tap primary" type="submit">
-            Save sharing
-          </button>
+          <SubmitButton>Save sharing</SubmitButton>
         </form>
         <p>
           <a href="/partner">View what a partner shared with you</a>
@@ -135,19 +136,17 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
               Invite email
               <input id="invite-email" name="email" type="email" autoComplete="email" required />
             </label>
-            <button className="tap" type="submit">
+            <SubmitButton variant="secondary" pendingLabel="Sending…">
               Send invite
-            </button>
+            </SubmitButton>
           </form>
           <ul>
             {pending.map((invite) => (
               <li key={invite.id}>
-                {invite.email} expires {invite.expiresAt.toISOString().slice(0, 10)}
+                {invite.email} expires {formatInstantDate(invite.expiresAt, profile.timezone)}
                 <form action={revokeInvite}>
                   <input type="hidden" name="inviteId" value={invite.id} />
-                  <button className="tap" type="submit">
-                    Revoke {invite.email}
-                  </button>
+                  <SubmitButton variant="secondary">Revoke {invite.email}</SubmitButton>
                 </form>
               </li>
             ))}
@@ -164,7 +163,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
         <ul>
           {audits.map((event) => (
             <li key={event.id}>
-              {LABELS[event.type] ?? event.type} · {event.at.toISOString().slice(0, 16).replace("T", " ")}
+              {LABELS[event.type] ?? event.type} · {formatZonedDateTime(event.at, profile.timezone)}
               {event.uaFamily ? ` · ${event.uaFamily}` : ""}
             </li>
           ))}
@@ -174,26 +173,31 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
       <section className="card" aria-labelledby="data-heading">
         <h2 id="data-heading">Your data</h2>
         <p className="row">
-          <a className="tap" href="/api/export?format=csv">
-            Download CSV
-          </a>
-          <a className="tap" href="/api/export?format=xlsx">
-            Download spreadsheet
-          </a>
+          <ButtonLink href="/api/export?format=csv">Download CSV</ButtonLink>
+          <ButtonLink href="/api/export?format=xlsx">Download spreadsheet</ButtonLink>
         </p>
-        <form className="stack" action={deleteAccount}>
-          <p>Deleting removes your training and signs you out. This needs a session from the last 12 hours.</p>
-          <label htmlFor="confirm">
-            Type DELETE
-            <input id="confirm" name="confirm" autoComplete="off" />
-          </label>
-          <button className="tap" type="submit">
-            Delete account
-          </button>
-        </form>
         <p>
           <a href="/privacy">Privacy notes</a>
         </p>
+      </section>
+
+      <section className="card danger-zone" aria-labelledby="delete-heading">
+        <h2 id="delete-heading">Delete account</h2>
+        <form className="stack" action={deleteAccount}>
+          <p>This deletes your training log and signs you out. It can&apos;t be undone. This needs a sign-in from the last 12 hours.</p>
+          <label htmlFor="confirm">
+            Type DELETE to confirm
+            <input id="confirm" name="confirm" autoComplete="off" aria-describedby={deleteError ? "delete-error" : undefined} />
+          </label>
+          {deleteError ? (
+            <p id="delete-error" className="alert" role="alert">
+              {deleteError}
+            </p>
+          ) : null}
+          <SubmitButton variant="danger" pendingLabel="Deleting…">
+            Delete account
+          </SubmitButton>
+        </form>
       </section>
     </>
   );

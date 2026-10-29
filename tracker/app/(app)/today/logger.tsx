@@ -1,11 +1,22 @@
 "use client";
 
-import * as Dialog from "@radix-ui/react-dialog";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { clientIdFor, postSet } from "@/components/sync-set";
+import { Button } from "@/components/ui/button";
+import { ChipGroup } from "@/components/ui/chip";
+import { CheckIcon } from "@/components/ui/icons";
+import { MiniLadder } from "@/components/ui/mini-ladder";
+import { Sheet } from "@/components/ui/sheet";
+import { Stepper } from "@/components/ui/stepper";
+import { Toast } from "@/components/ui/toast";
+import { setButtonName } from "@/lib/copy";
+import { seedSetValue } from "@/lib/stepper";
 import type { TodayItem } from "@/lib/today";
+
+const RIR_HELP =
+  "RIR means reps left in the tank. After the last set, say how many good reps you still had. 3 means the set was solid and you could have done about three more.";
 
 export function Logger({
   date,
@@ -19,13 +30,23 @@ export function Logger({
   items: TodayItem[];
 }) {
   const router = useRouter();
+  const opener = useRef<HTMLElement | null>(null);
   const [item, setItem] = useState<TodayItem | null>(null);
   const [setNumber, setSetNumber] = useState(1);
   const [value, setValue] = useState(0);
   const [rir, setRir] = useState("3");
   const [status, setStatus] = useState("");
+  const [tone, setTone] = useState<"done" | "danger">("done");
+  const [help, setHelp] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [restToken, setRestToken] = useState(0);
   const [restSeconds, setRestSeconds] = useState(0);
+
+  useEffect(() => {
+    if (!status) return;
+    const timer = window.setTimeout(() => setStatus(""), 4000);
+    return () => window.clearTimeout(timer);
+  }, [status]);
 
   useEffect(() => {
     if (!restToken || restSeconds <= 0) return;
@@ -33,8 +54,12 @@ export function Logger({
     const total = restSeconds;
     const timer = window.setInterval(() => {
       const left = Math.max(0, total - Math.round((Date.now() - started) / 1000));
-      if (left === 10) setStatus("10 seconds left.");
+      if (left === 10) {
+        setTone("done");
+        setStatus("10 seconds left.");
+      }
       if (left === 0) {
+        setTone("done");
         setStatus("Rest finished.");
         window.clearInterval(timer);
       }
@@ -43,25 +68,28 @@ export function Logger({
   }, [restToken, restSeconds]);
 
   function openSet(next: TodayItem, number: number) {
+    opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const existing = next.logged[number - 1];
     const prior = next.previous[number - 1] ?? next.previous[next.previous.length - 1];
-    const seed = typeof existing === "number" ? existing : typeof prior === "number" ? prior : next.targetMin;
     setItem(next);
     setSetNumber(number);
-    setValue(seed);
+    setValue(seedSetValue(existing, prior, next.targetMin));
     setRir(next.rir === null ? "3" : String(next.rir));
+    setHelp(false);
   }
 
   async function save() {
-    if (!item) return;
+    if (!item || saving) return;
+    setSaving(true);
     const last = setNumber === item.prescribedSets;
+    const savedValue = value;
     const result = await postSet({
       date,
       exerciseId: item.exerciseId,
       block: item.block,
       order: item.order,
       setNumber,
-      value,
+      value: savedValue,
       rir: last ? Number(rir) : null,
       prescribedSets: item.prescribedSets,
       targetMin: item.targetMin,
@@ -70,18 +98,21 @@ export function Logger({
       sessionType: sessionType === "rest" ? "workout" : sessionType,
       clientId: clientIdFor(date),
     });
-    const savedName = item.name;
     const savedNumber = setNumber;
     const restFor = item.restSeconds;
     const more = setNumber < item.prescribedSets;
+    const noun = item.unit.startsWith("seconds") ? "seconds" : "reps";
+    setSaving(false);
     setItem(null);
     if (!result.ok) {
+      setTone("danger");
       setStatus(result.error);
       return;
     }
     const savedText = result.queued
-      ? "Saved on this device. It will sync when you are back online."
-      : `${savedName} set ${savedNumber} saved.`;
+      ? "Saved on this phone. It'll sync when you're back online."
+      : `Set ${savedNumber} saved · ${savedValue} ${noun}.`;
+    setTone("done");
     setStatus(more ? `${savedText} Rest started, ${restFor} seconds.` : savedText);
     if (more) {
       setRestSeconds(restFor);
@@ -90,95 +121,130 @@ export function Logger({
     router.refresh();
   }
 
-  const unitLabel = item?.unit.startsWith("seconds") ? "Seconds" : "Reps or seconds";
+  const currentKey = items.find((entry) => entry.logged.some((logged) => typeof logged !== "number"))?.key;
+  const seconds = item?.unit.startsWith("seconds") ?? false;
+  const lastSet = Boolean(item && setNumber === item.prescribedSets);
+  const aim = item?.rir ?? 3;
+  const description = item
+    ? lastSet
+      ? `Aim for ${item.targetMin} to ${item.targetMax}. Leave about ${aim} reps in the tank on this set.`
+      : `Aim for ${item.targetMin} to ${item.targetMax}.`
+    : "Log a set.";
 
   return (
     <div className="stack">
-      <p className="sr-only" aria-live="polite">
-        {status}
-      </p>
-      {items.map((entry) => (
-        <section key={entry.key} className="card" aria-labelledby={`ex-${entry.key}`}>
-          <h2 id={`ex-${entry.key}`}>
-            {entry.block} · {entry.name}
-          </h2>
-          <p className="muted">
-            {entry.prescribedSets} sets of {entry.targetMin}–{entry.targetMax}
-            {entry.unit.startsWith("seconds") ? " seconds" : " reps"}
-          </p>
-          {entry.cues[0] ? <p>{entry.cues[0]}</p> : null}
-          <div className="stack">
-            {entry.logged.map((logged, index) => {
-              const number = index + 1;
-              const suffix = typeof logged === "number" ? `, ${logged}` : "";
-              return (
-                <button key={number} className="tap" type="button" onClick={() => openSet(entry, number)}>
-                  {entry.name} set {number}
-                  {suffix}
-                </button>
-              );
-            })}
-          </div>
-        </section>
-      ))}
-
-      <Dialog.Root open={item !== null} onOpenChange={(open) => { if (!open) setItem(null); }}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="overlay" />
-          <Dialog.Content className="dialog">
-            <Dialog.Title>
-              {item?.name}, set {setNumber}
-            </Dialog.Title>
-            <Dialog.Description>
-              Aim for {item?.targetMin} to {item?.targetMax}. Leave about {item?.rir ?? 3} reps in the tank on the last set.
-            </Dialog.Description>
-            <div className="stack">
-              <label htmlFor="set-value">
-                {unitLabel}
-                <input
-                  id="set-value"
-                  type="number"
-                  inputMode="numeric"
-                  role="spinbutton"
-                  min={0}
-                  max={600}
-                  aria-valuemin={0}
-                  aria-valuemax={600}
-                  aria-valuenow={value}
-                  value={value}
-                  onChange={(event) => setValue(Number(event.target.value))}
-                />
-              </label>
-              <div className="row">
-                <button className="tap" type="button" onClick={() => setValue((current) => Math.max(0, current - 1))}>
-                  Decrease
-                </button>
-                <button className="tap" type="button" onClick={() => setValue((current) => Math.min(600, current + 1))}>
-                  Increase
-                </button>
+      <Toast message={status} tone={tone} />
+      {items.map((entry) => {
+        const done = entry.logged.every((logged) => typeof logged === "number");
+        const current = entry.key === currentKey && !done;
+        const logged = entry.logged.filter((amount): amount is number => typeof amount === "number");
+        const unit = entry.unit.startsWith("seconds") ? " s" : "";
+        const dose = `${entry.prescribedSets} × ${entry.targetMin}–${entry.targetMax}${unit}`;
+        const loggedText = logged.length > 0 ? ` · ${logged.join(", ")}` : "";
+        return (
+          <section
+            key={entry.key}
+            className={`card exercise-row${done ? " is-done" : ""}${current ? " is-current" : ""}`}
+            aria-labelledby={`ex-${entry.key}`}
+          >
+            <div className="exercise-head">
+              <MiniLadder level={entry.level} total={entry.rungTotal} />
+              <div>
+                <h2 className="row-title" id={`ex-${entry.key}`}>
+                  {entry.name}
+                  {done ? <span className="sr-only">, done</span> : null}
+                  {current ? <span className="sr-only">, now</span> : null}
+                </h2>
+                <p className="meta">
+                  {entry.patternName} · level {entry.level} of {entry.rungTotal} · {dose}
+                  {loggedText}
+                </p>
               </div>
-              {item && setNumber === item.prescribedSets ? (
-                <label htmlFor="rir">
-                  Reps left in the tank
-                  <select id="rir" value={rir} onChange={(event) => setRir(event.target.value)}>
-                    {["0", "1", "2", "3", "4", "5"].map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+              {done ? (
+                <span className="done-badge" aria-hidden="true">
+                  <CheckIcon />
+                </span>
               ) : null}
-              <button className="tap primary" type="button" onClick={save}>
-                Save set
-              </button>
-              <Dialog.Close className="tap" type="button">
-                Cancel
-              </Dialog.Close>
+              {current ? <span className="tag tag-now">Now</span> : null}
             </div>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+            <div className="stack">
+              {entry.logged.map((amount, index) => {
+                const number = index + 1;
+                const saved = typeof amount === "number";
+                const nextNumber = entry.logged.findIndex((logged) => typeof logged !== "number") + 1;
+                return (
+                  <Button
+                    key={number}
+                    variant={current && number === nextNumber ? "primary" : "secondary"}
+                    type="button"
+                    aria-label={setButtonName(entry.name, number, saved ? amount : null, entry.unit)}
+                    onClick={() => openSet(entry, number)}
+                  >
+                    {saved ? `Set ${number} · ${amount}` : `Set ${number}`}
+                  </Button>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
+
+      {item ? (
+        <Sheet
+          open
+          onOpenChange={(open) => {
+            if (!open) setItem(null);
+          }}
+          title={`${item.name}, set ${setNumber}`}
+          description={description}
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            opener.current?.focus();
+          }}
+        >
+          <div className="stack">
+            <Stepper
+              id="set-value"
+              value={value}
+              onChange={setValue}
+              unit={seconds ? "seconds" : "reps"}
+              label={seconds ? "Seconds" : "Reps"}
+            />
+            {lastSet ? (
+              <div className="stack">
+                <div className="chip-label-row">
+                  <span id="rir-label">Reps left in the tank</span>
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    aria-expanded={help}
+                    aria-controls="rir-help"
+                    onClick={() => setHelp((open) => !open)}
+                  >
+                    <span aria-hidden="true">?</span>
+                    <span className="sr-only">What does RIR mean?</span>
+                  </Button>
+                </div>
+                {help ? <p id="rir-help">{RIR_HELP}</p> : <p id="rir-help" className="sr-only">{RIR_HELP}</p>}
+                <ChipGroup
+                  label="Reps left in the tank"
+                  labelId="rir-label"
+                  value={rir}
+                  onChange={setRir}
+                  options={["0", "1", "2", "3", "4", "5"].map((option) => ({
+                    value: option,
+                    label: option === "5" ? "5+" : option,
+                  }))}
+                />
+                <p className="meta">Today&apos;s aim: about {aim}.</p>
+              </div>
+            ) : null}
+            <Button variant="primary" type="button" pending={saving} pendingLabel="Saving…" onClick={save}>
+              Save set
+            </Button>
+          </div>
+        </Sheet>
+      ) : null}
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { asc, eq } from "drizzle-orm";
 
 import { VideoFacade } from "@/components/video-facade";
+import { PageHeader } from "@/components/ui/page-header";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { getDatabase } from "@/lib/db";
 import { exercises, videos } from "@/lib/db/schema";
 
@@ -23,26 +25,27 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
 
   return (
     <>
-      <h1>Library</h1>
+      <PageHeader title="Library" />
       <form className="stack" action="/library" method="get">
         <label htmlFor="q">
           Search exercises
-          <input id="q" name="q" defaultValue={q ?? ""} />
+          <input id="q" name="q" type="search" defaultValue={q ?? ""} />
         </label>
-        <button className="tap" type="submit">
+        <SubmitButton variant="secondary" pendingLabel="Searching…">
           Search
-        </button>
+        </SubmitButton>
       </form>
       {shown.map((row) => {
         const video = primary.get(row.id);
         return (
           <article key={row.id} className="card">
-            <h2>
-              {row.name} <span className="muted">level {row.level}</span>
+            <h2 className="row-title">
+              {row.name}
+              {row.level > 0 ? <span className="meta"> level {row.level}</span> : null}
             </h2>
             <p>{row.description}</p>
             {row.cues.length > 0 ? (
-              <ul>
+              <ul className="prose-list">
                 {row.cues.map((cue) => (
                   <li key={cue}>{cue}</li>
                 ))}
