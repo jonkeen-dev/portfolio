@@ -1,6 +1,8 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
+
+import { Button } from "@/components/ui/button";
 
 const COMMON = ["UTC", "America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", "Europe/London"];
 
@@ -18,17 +20,31 @@ export function TimezoneField() {
     deviceZone,
     () => "UTC",
   );
-  const options = COMMON.includes(zone) ? COMMON : [zone, ...COMMON];
+  const [custom, setCustom] = useState<string | null>(null);
+  const value = custom ?? zone;
+  const options = COMMON.includes(value) ? COMMON : [value, ...COMMON];
   return (
-    <label htmlFor="timezone">
-      Timezone
-      <select id="timezone" name="timezone" defaultValue={zone} key={zone}>
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-    </label>
+    <div className="stack">
+      <p>
+        Timezone: <span className="meta">{value}</span>
+      </p>
+      {custom === null ? <input type="hidden" name="timezone" value={value} /> : null}
+      {custom === null ? (
+        <Button type="button" variant="ghost" onClick={() => setCustom(zone)}>
+          Change
+        </Button>
+      ) : (
+        <label htmlFor="timezone">
+          Timezone
+          <select id="timezone" name="timezone" value={custom} onChange={(event) => setCustom(event.target.value)}>
+            {options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+    </div>
   );
 }

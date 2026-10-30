@@ -34,7 +34,7 @@ async function expectAccessible(page: Page, name: string) {
   await page.emulateMedia({ colorScheme: "dark" });
 }
 
-test("sign in, log a workout, level up, and publish a profile", async ({ page, request }) => {
+test("sign in, log a workout, level up, and publish a profile", async ({ page, request, browser }) => {
   await page.goto("/sign-in");
   await expect(page.getByRole("heading", { name: "Calisthenics Tracker" })).toBeVisible();
   await page.screenshot({ path: "/opt/cursor/artifacts/sign-in.png", fullPage: true });
@@ -60,9 +60,17 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
 
   await page.goto(link);
   await page.waitForURL(/\/setup/);
+  await expect(page.getByRole("heading", { name: "How this works" })).toBeVisible();
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.setViewportSize({ width: 412, height: 915 });
+  await page.screenshot({ path: "/opt/cursor/artifacts/phase4-setup.png" });
   await expectAccessible(page, "setup");
+  await page.getByRole("button", { name: "Next" }).click();
+  await page.getByLabel("Name (optional)").fill("Jon");
   await page.getByLabel("Start date").fill("2026-10-12");
-  await page.getByRole("button", { name: "Save setup" }).click();
+  await page.getByRole("button", { name: "Next" }).click();
+  await expect(page.getByText(/Your first session is Monday, Oct 12/)).toBeVisible();
+  await page.getByRole("button", { name: "Go to Today" }).click();
   await page.waitForURL(/\/today/);
 
   const prior = await page.request.post("/api/dev/prior-session", {
@@ -154,16 +162,28 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
 
   await page.goto("/settings");
   await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
-  await expect(page.getByRole("radio", { name: "Match this device" })).toBeChecked();
-  await expect(page.getByText("Dark")).toBeVisible();
-  await page.screenshot({ path: "/opt/cursor/artifacts/settings.png", fullPage: true });
+  await page.screenshot({ path: "/opt/cursor/artifacts/phase4-settings.png" });
   await expectFits(page, "settings");
   await expectAccessible(page, "settings");
+  await page.getByRole("link", { name: /Look and accessibility/ }).click();
+  await expect(page.getByRole("radio", { name: "Match this device" })).toBeChecked();
+  await expect(page.getByText("Dark")).toBeVisible();
+  await expectAccessible(page, "appearance");
 
-  await page.getByRole("radio", { name: "Public" }).check();
+  await page.goto("/settings/sharing");
+  await page.getByRole("radio", { name: "Anyone with the link" }).check();
   await page.getByLabel("Handle").fill("owner");
   await page.getByRole("button", { name: "Save sharing" }).click();
-  await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Sharing" })).toBeVisible();
+  const copyLink = page.getByRole("button", { name: "Copy link" });
+  await expect(copyLink).toBeVisible();
+  await copyLink.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "/opt/cursor/artifacts/phase4-sharing.png" });
+  await page.getByRole("button", { name: "Preview" }).click();
+  await expect(page.getByText("This is what others see.")).toBeVisible();
+  await page.screenshot({ path: "/opt/cursor/artifacts/phase4-preview.png" });
+  await expectAccessible(page, "sharing preview");
+  await page.getByRole("button", { name: "Close" }).click();
 
   await page.goto("/u/owner");
   await expect(page.getByText("View only")).toBeVisible();
@@ -177,8 +197,9 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
   await expectAccessible(page, "public profile");
 
   const missing = await request.get("/u/nobody-here");
-  expect(missing.status()).toBe(200);
-  expect(await missing.text()).toContain("This profile is not available.");
+  expect(missing.status()).toBe(404);
+  expect(await missing.text()).toContain("That page doesn't exist.");
+  expect(missing.headers()["x-robots-tag"] ?? "").toContain("noindex");
   const published = await request.get("/u/owner");
   expect(published.status()).toBe(200);
   expect(published.headers()["x-robots-tag"] ?? "").toContain("noindex");
@@ -243,6 +264,62 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
   await expect(page.getByRole("heading", { name: "Rest day" })).toBeVisible();
   await expect(page.getByText(/Next: Friday/)).toBeVisible();
   await expectAccessible(page, "rest day");
+
+  await page.goto("/settings/people");
+  await page.getByLabel("Email").fill("partner@example.com");
+  await page.getByRole("button", { name: "Send invite" }).click();
+  await expect(page.getByText("Invite sent to partner@example.com. It works for 72 hours.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Copy invite link" }).first()).toBeVisible();
+
+  let inviteUrl = "";
+  let inviteSubject = "";
+  let inviteText = "";
+  await expect
+    .poll(async () => {
+      const response = await request.get("/api/dev/mailbox");
+      const body = (await response.json()) as {
+        messages: Array<{ to: string; subject: string; text: string; url: string | null }>;
+      };
+      const message = body.messages.find((item) => item.to === "partner@example.com");
+      inviteUrl = message?.url ?? "";
+      inviteSubject = message?.subject ?? "";
+      inviteText = message?.text ?? "";
+      return inviteUrl;
+    })
+    .toContain("/magic-link/verify");
+  expect(inviteSubject).toBe("Jon invited you to Calisthenics Tracker");
+  expect(inviteText).toContain(inviteUrl);
+  expect(inviteText).toContain("72 hours");
+
+  const partnerContext = await browser.newContext();
+  const partnerPage = await partnerContext.newPage();
+  await partnerPage.setViewportSize({ width: 412, height: 915 });
+  await partnerPage.goto(inviteUrl);
+  await partnerPage.waitForURL(/\/setup/);
+  await partnerPage.getByRole("button", { name: "Next" }).click();
+  await partnerPage.getByLabel("Start date").fill("2026-10-12");
+  await partnerPage.getByRole("button", { name: "Next" }).click();
+  await partnerPage.getByRole("button", { name: "Go to Today" }).click();
+  await partnerPage.waitForURL(/\/today/);
+  await partnerPage.goto("/partner");
+  await expect(partnerPage.getByRole("heading", { name: "owner", exact: true })).toBeVisible();
+  await expect(partnerPage.getByText("View only")).toBeVisible();
+  await expect(partnerPage.locator("dt").filter({ hasText: "Sessions" })).toBeVisible();
+  await partnerPage.emulateMedia({ colorScheme: "dark" });
+  await partnerPage.screenshot({ path: "/opt/cursor/artifacts/phase4-partner.png" });
+  await expectAccessible(partnerPage, "partner joined");
+
+  await partnerPage.goto("/settings/data");
+  await partnerPage.getByRole("button", { name: "Delete account" }).click();
+  const sheet = partnerPage.getByRole("dialog");
+  await expect(sheet.getByRole("button", { name: "Delete account" })).toBeDisabled();
+  await partnerPage.screenshot({ path: "/opt/cursor/artifacts/phase4-delete.png" });
+  await sheet.getByLabel("Type DELETE to confirm").fill("delete");
+  await expect(sheet.getByRole("button", { name: "Delete account" })).toBeDisabled();
+  await sheet.getByLabel("Type DELETE to confirm").fill("DELETE");
+  await sheet.getByRole("button", { name: "Delete account" }).click();
+  await expect(partnerPage.getByText("Your account and training log were deleted.")).toBeVisible();
+  await partnerContext.close();
 
   await page.context().clearCookies();
   await page.goto("/today");

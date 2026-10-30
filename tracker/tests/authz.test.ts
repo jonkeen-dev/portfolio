@@ -2,11 +2,13 @@ import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { eq } from "drizzle-orm";
+
 import { createDal } from "../lib/db/access";
 import type { AppDatabase } from "../lib/db";
 import { migrate } from "../lib/db/migrate";
 import * as schema from "../lib/db/schema";
-import { athleteProfiles, exerciseLogs, setLogs, user, workoutSessions } from "../lib/db/schema";
+import { athleteProfiles, exerciseLogs, setLogs, shares, user, workoutSessions } from "../lib/db/schema";
 import { seedReference } from "../scripts/seed-lib";
 
 let client: PGlite;
@@ -194,6 +196,22 @@ describe("authorization", () => {
     expect(after).toEqual({ available: false });
     const stillPrivate = await dal.getPublicProfile("owner-athlete");
     expect(stillPrivate).toEqual({ available: false });
+  });
+
+  it("lets a partner who joins later see sharing without another save", async () => {
+    await dal.setSharing({
+      userId: ownerId,
+      visibility: "partner",
+      sections: ["stats_charts"],
+      handle: "owner-athlete",
+      showName: true,
+      showEmail: false,
+      allowIndexing: false,
+    });
+    await db.update(shares).set({ revokedAt: new Date() }).where(eq(shares.ownerId, ownerId));
+    const late = await dal.getPartnerView(partnerId, ownerId);
+    expect(late.available).toBe(true);
+    if (late.available) expect(late.stats).not.toBeNull();
   });
 
   it("refuses a write that is not tied to a user", async () => {

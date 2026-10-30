@@ -484,6 +484,12 @@ export function createDal(db: AppDatabase) {
 
     async getPartnerView(viewerId: string, ownerId: string): Promise<PublicProfile> {
       if (viewerId === ownerId) return { available: false };
+      const [viewer] = await db
+        .select()
+        .from(user)
+        .where(and(eq(user.id, viewerId), isNull(user.deactivatedAt)))
+        .limit(1);
+      if (!viewer) return { available: false };
       const [profile] = await db
         .select()
         .from(athleteProfiles)
@@ -492,13 +498,12 @@ export function createDal(db: AppDatabase) {
       if (!profile || (profile.visibility !== "partner" && profile.visibility !== "public")) {
         return { available: false };
       }
-      const [share] = await db
+      const [owner] = await db
         .select()
-        .from(shares)
-        .where(and(eq(shares.ownerId, ownerId), eq(shares.viewerId, viewerId), isNull(shares.revokedAt)))
+        .from(user)
+        .where(and(eq(user.id, ownerId), isNull(user.deactivatedAt)))
         .limit(1);
-      if (!share) return { available: false };
-      const [owner] = await db.select().from(user).where(eq(user.id, ownerId)).limit(1);
+      if (!owner) return { available: false };
       const sections = new Set(profile.visibleSections);
       const asOf = new Date().toISOString().slice(0, 10);
       const filled = await fillSections(db, ownerId, profile.startDate, sections, asOf);
