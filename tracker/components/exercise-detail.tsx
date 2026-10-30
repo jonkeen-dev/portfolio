@@ -1,6 +1,7 @@
 "use client";
 
 import { VideoFacade } from "@/components/video-facade";
+import { Keep } from "@/components/ui/keep";
 
 export type ExerciseDetailModel = {
   id: string;
@@ -29,11 +30,17 @@ export function ExerciseDetail({
   const harder = item.progressionId ? names[item.progressionId] : undefined;
   return (
     <div className="stack">
-      {item.description ? <p>{item.description}</p> : null}
+      {item.description ? (
+        <p>
+          <Keep text={item.description} />
+        </p>
+      ) : null}
       {cues.length > 0 ? (
         <ul className="prose-list">
           {cues.map((cue) => (
-            <li key={cue}>{cue}</li>
+            <li key={cue}>
+              <Keep text={cue} />
+            </li>
           ))}
         </ul>
       ) : null}
@@ -47,12 +54,18 @@ export function ExerciseDetail({
           <h3>Watch out for</h3>
           <ul className="prose-list">
             {item.mistakes.map((mistake) => (
-              <li key={mistake}>{mistake}</li>
+              <li key={mistake}>
+                <Keep text={mistake} />
+              </li>
             ))}
           </ul>
         </div>
       ) : null}
-      {item.safetyNote ? <p className="callout">{item.safetyNote}</p> : null}
+      {item.safetyNote ? (
+        <p className="callout">
+          <Keep text={item.safetyNote} />
+        </p>
+      ) : null}
       {mode === "full" && (easier || harder) ? (
         <p>
           {easier && item.regressionId ? (
@@ -86,9 +99,13 @@ function Jump({ id, name, onJump }: { id: string; name: string; onJump?: (id: st
   if (onJump) {
     return (
       <button type="button" className="linkish" onClick={() => onJump(id)}>
-        {name}
+        <Keep text={name} />
       </button>
     );
   }
-  return <a href={`/library#${id}`}>{name}</a>;
+  return (
+    <a className="tap" href={`/library#${id}`}>
+      <Keep text={name} />
+    </a>
+  );
 }

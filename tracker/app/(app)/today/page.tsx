@@ -28,14 +28,14 @@ export default async function TodayPage({
   const model = await loadToday(session.user.id, requested);
   if (!model) return null;
   const title = model.rest || model.outside ? "Rest day" : displayTitle(model.title);
-  const eyebrow = [
-    weekdayName(model.date),
-    `Week ${model.week} of 12`,
-    model.phaseName,
-    model.day ? `Day ${model.day}` : null,
-  ]
-    .filter(Boolean)
-    .join(" · ");
+  const eyebrow = (
+    <>
+      <span className="nowrap">{weekdayName(model.date)}</span>
+      <span className="nowrap">Week {model.week} of 12</span>
+      {model.phaseName ? <span className="nowrap">{model.phaseName}</span> : null}
+      {model.day ? <span className="nowrap">Day {model.day}</span> : null}
+    </>
+  );
   const doneCount = model.items.filter((item) => item.logged.every((value) => typeof value === "number")).length;
   const ready = model.completed
     ? model.suggestions.filter((item) => item.status === "READY" && item.suggestedExerciseId && item.suggestedName)

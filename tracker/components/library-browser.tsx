@@ -4,6 +4,7 @@ import { useMemo, useState, useSyncExternalStore } from "react";
 
 import { ExerciseDetail, type ExerciseDetailModel } from "@/components/exercise-detail";
 import { Button } from "@/components/ui/button";
+import { Keep } from "@/components/ui/keep";
 import { ChipGroup } from "@/components/ui/chip";
 import { LIBRARY_FILTERS, libraryGroupOrder, matchesLibrary } from "@/lib/library";
 
@@ -98,8 +99,12 @@ export function LibraryBrowser({ items }: { items: LibraryEntry[] }) {
                     onClick={() => setPicked(expanded ? false : row.id)}
                   >
                     <span>
-                      <span className="row-title">{row.name}</span>
-                      <span className="meta">{leveled && row.level > 0 ? `${label} · level ${row.level}` : label}</span>
+                      <span className="row-title">
+                        <Keep text={row.name} />
+                      </span>
+                      <span className="meta">
+                        <Keep text={leveled && row.level > 0 ? `${label} · level ${row.level}` : label} />
+                      </span>
                     </span>
                     <span className="tag-cluster">
                       {row.video ? <span className="tag">Demo</span> : null}

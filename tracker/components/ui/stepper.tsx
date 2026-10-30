@@ -30,37 +30,36 @@ export function Stepper({
 
   return (
     <div className="stepper">
-      <Button variant="stepper" aria-label={fewer} onClick={() => set(value - 1)}>
+      <label className="sr-only" htmlFor={id}>
+        {label}
+      </label>
+      <Button variant="stepper" className="stepper-dec" aria-label={fewer} onClick={() => set(value - 1)}>
         −
       </Button>
-      <div className="stepper-value">
-        <label className="sr-only" htmlFor={id}>
-          {label}
-        </label>
-        <input
-          id={id}
-          type="number"
-          inputMode="numeric"
-          min={min}
-          max={max}
-          value={value}
-          onChange={(event) => set(Number(event.target.value))}
-          onKeyDown={(event) => {
-            if (event.key === "PageUp") {
-              event.preventDefault();
-              set(value + 10);
-            }
-            if (event.key === "PageDown") {
-              event.preventDefault();
-              set(value - 10);
-            }
-          }}
-        />
-        <span className="meta">{unit}</span>
-      </div>
-      <Button variant="stepper" aria-label={more} onClick={() => set(value + 1)}>
+      <input
+        id={id}
+        className="stepper-input"
+        type="number"
+        inputMode="numeric"
+        min={min}
+        max={max}
+        value={value}
+        onChange={(event) => set(Number(event.target.value))}
+        onKeyDown={(event) => {
+          if (event.key === "PageUp") {
+            event.preventDefault();
+            set(value + 10);
+          }
+          if (event.key === "PageDown") {
+            event.preventDefault();
+            set(value - 10);
+          }
+        }}
+      />
+      <Button variant="stepper" className="stepper-inc" aria-label={more} onClick={() => set(value + 1)}>
         +
       </Button>
+      <span className="meta stepper-unit">{unit}</span>
     </div>
   );
 }

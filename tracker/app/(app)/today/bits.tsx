@@ -3,6 +3,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 
 import { Button, ButtonLink } from "@/components/ui/button";
+import { Keep } from "@/components/ui/keep";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { addDays } from "@/lib/engine/dates";
 import { acceptLevel } from "@/lib/actions";
@@ -75,7 +76,11 @@ export function CoachNote({ week, note }: { week: number; note: string }) {
       </Button>
     );
   }
-  return <p className="muted">{note}</p>;
+  return (
+    <p className="muted">
+      <Keep text={note} />
+    </p>
+  );
 }
 
 export function LevelUpCard({
@@ -102,7 +107,7 @@ export function LevelUpCard({
     <section className="card" aria-labelledby={`ready-${patternId}`}>
       <h2 id={`ready-${patternId}`}>Ready to level up</h2>
       <p>
-        {patternName} can move up to {suggestedName}. {reason}
+        <Keep text={`${patternName} can move up to ${suggestedName}. ${reason}`} />
       </p>
       <p className="muted">You were on {exerciseName}.</p>
       <div className="row">
@@ -111,7 +116,9 @@ export function LevelUpCard({
           <input type="hidden" name="patternId" value={patternId} />
           <input type="hidden" name="toExerciseId" value={suggestedId} />
           <input type="hidden" name="next" value={`/today?on=${date}`} />
-          <SubmitButton>Move up to {suggestedName}</SubmitButton>
+          <SubmitButton>
+            <Keep text={`Move up to ${suggestedName}`} />
+          </SubmitButton>
         </form>
         <Button
           type="button"

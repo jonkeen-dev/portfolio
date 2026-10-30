@@ -1,3 +1,4 @@
+import { Keep } from "@/components/ui/keep";
 import { MiniLadder } from "@/components/ui/mini-ladder";
 
 export type SharedLevel = {
@@ -79,9 +80,11 @@ export function PublicProfileView({
             <article key={level.patternId} className="card exercise-head">
               <MiniLadder level={level.level} total={level.rungTotal} />
               <div>
-                <h3 className="row-title">{level.patternName}</h3>
+                <h3 className="row-title">
+                  <Keep text={level.patternName} />
+                </h3>
                 <p className="meta">
-                  {level.exerciseName} · level {level.level} of {level.rungTotal}
+                  <Keep text={`${level.exerciseName} · level ${level.level} of ${level.rungTotal}`} />
                 </p>
               </div>
             </article>

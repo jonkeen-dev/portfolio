@@ -28,7 +28,9 @@ export default async function PartnerPage() {
           {owner ? (
             <>
               {" "}
-              <a href="/settings/people">Invite someone from People.</a>
+              <a className="tap" href="/settings/people">
+                Invite someone from People.
+              </a>
             </>
           ) : null}
         </p>
