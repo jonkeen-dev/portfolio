@@ -5,6 +5,15 @@ import { expect, test, type Page } from "@playwright/test";
 
 mkdirSync("/opt/cursor/artifacts", { recursive: true });
 
+async function expectFits(page: Page, name: string) {
+  for (const width of [320, 360, 412]) {
+    await page.setViewportSize({ width, height: 915 });
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(overflow, `${name} overflows by ${overflow}px at ${width}`).toBeLessThanOrEqual(1);
+  }
+  await page.setViewportSize({ width: 412, height: 915 });
+}
+
 async function expectAccessible(page: Page, name: string) {
   for (const scheme of ["dark", "light"] as const) {
     await page.emulateMedia({ colorScheme: scheme });
@@ -65,6 +74,17 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
   await page.goto("/today?on=2026-10-26");
   await expect(page.getByRole("heading", { name: "Full body", exact: true })).toBeVisible();
   await expect(page.getByText("Week 3")).toBeVisible();
+  await page.getByRole("button", { name: "How to" }).first().click();
+  const howTo = page.getByRole("dialog");
+  await expect(howTo).toBeVisible();
+  await expect(howTo.getByRole("button", { name: /Play demo/ })).toBeVisible();
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.setViewportSize({ width: 412, height: 915 });
+  await page.screenshot({ path: "/opt/cursor/artifacts/phase3-howto.png" });
+  await expectAccessible(page, "how to");
+  await page.getByRole("button", { name: "Close" }).click();
+  await expect(howTo).toBeHidden();
+  await expectFits(page, "today");
   await expectAccessible(page, "today");
 
   for (const setNumber of [1, 2, 3]) {
@@ -93,17 +113,43 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
 
   await page.goto("/ladders");
   await expect(page.getByRole("heading", { name: "Ladders" })).toBeVisible();
-  await page.screenshot({ path: "/opt/cursor/artifacts/ladders.png", fullPage: true });
+  await expect(page.getByRole("button", { name: /Choose a level myself/ }).first()).toBeVisible();
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.setViewportSize({ width: 412, height: 915 });
+  await page.screenshot({ path: "/opt/cursor/artifacts/phase3-ladders.png" });
+  await page.getByRole("button", { name: "Choose a level myself" }).first().click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page.getByText("Use this if the current level is too easy or too hard.")).toBeVisible();
+  await page.screenshot({ path: "/opt/cursor/artifacts/phase3-choose-level.png" });
+  await expectAccessible(page, "choose level");
+  await page.getByRole("button", { name: "Close" }).click();
+  await expectFits(page, "ladders");
   await expectAccessible(page, "ladders");
 
   await page.goto("/progress");
   await expect(page.getByRole("heading", { name: "Progress" })).toBeVisible();
-  await page.screenshot({ path: "/opt/cursor/artifacts/progress.png", fullPage: true });
+  await expect(page.locator("dt").filter({ hasText: "Sessions" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Recent sessions" })).toBeVisible();
+  await page.screenshot({ path: "/opt/cursor/artifacts/phase3-progress.png" });
+  await page.getByRole("button", { name: /^Squat/ }).click();
+  await expect(page.getByRole("button", { name: "Show as table" })).toBeVisible();
+  await page.screenshot({ path: "/opt/cursor/artifacts/phase3-movement.png" });
+  await page.getByRole("button", { name: "Show as table" }).click();
+  await expect(page.getByRole("table", { name: /Squat top set/ })).toBeVisible();
+  await expectFits(page, "progress");
   await expectAccessible(page, "progress");
 
   await page.goto("/library");
   await expect(page.getByRole("heading", { name: "Library" })).toBeVisible();
-  await page.screenshot({ path: "/opt/cursor/artifacts/library.png", fullPage: true });
+  await page.getByRole("radio", { name: "Squat" }).click();
+  await expect(page.getByRole("button", { name: /Box Squat/ })).toBeVisible();
+  await expect(page.getByText("Wall Push-Up")).toHaveCount(0);
+  await page.getByLabel("Search exercises").fill("wall slide");
+  await page.getByRole("radio", { name: "All" }).click();
+  await expect(page.getByRole("button", { name: /Wall Slide/ })).toBeVisible();
+  await expect(page.getByText("Box Squat")).toHaveCount(0);
+  await page.screenshot({ path: "/opt/cursor/artifacts/phase3-library.png" });
+  await expectFits(page, "library");
   await expectAccessible(page, "library");
 
   await page.goto("/settings");
@@ -111,6 +157,7 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
   await expect(page.getByRole("radio", { name: "Match this device" })).toBeChecked();
   await expect(page.getByText("Dark")).toBeVisible();
   await page.screenshot({ path: "/opt/cursor/artifacts/settings.png", fullPage: true });
+  await expectFits(page, "settings");
   await expectAccessible(page, "settings");
 
   await page.getByRole("radio", { name: "Public" }).check();

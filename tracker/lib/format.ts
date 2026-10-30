@@ -9,11 +9,28 @@ function zoneOrUtc(timeZone: string): string {
   }
 }
 
+/** "Wed, Oct 21" for a calendar date, without shifting the day. */
+export function formatWeekdayDate(iso: string, locale = "en-US"): string {
+  const date = calendarDate(iso);
+  if (!date) return iso;
+  return new Intl.DateTimeFormat(locale, {
+    timeZone: "UTC",
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  }).format(date);
+}
+
+function calendarDate(iso: string): Date | null {
+  const match = DATE_ONLY.exec(iso);
+  if (!match) return null;
+  return new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12));
+}
+
 /** Calendar date (YYYY-MM-DD) in the reader's locale, without shifting the day. */
 export function formatCalendarDate(iso: string, locale = "en-US"): string {
-  const match = DATE_ONLY.exec(iso);
-  if (!match) return iso;
-  const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12));
+  const date = calendarDate(iso);
+  if (!date) return iso;
   return new Intl.DateTimeFormat(locale, {
     timeZone: "UTC",
     month: "short",
