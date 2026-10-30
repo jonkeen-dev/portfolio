@@ -67,6 +67,8 @@ export type MovementSuggestion = EngineResult & {
   exerciseId: string;
   exerciseName: string;
   suggestedName: string | null;
+  lastTargetMax: number | null;
+  unit: string;
 };
 
 function id(): string {
@@ -296,6 +298,7 @@ export function createDal(db: AppDatabase) {
 
       const byPattern = new Map<string, ExerciseLogInput[]>();
       const lastExercise = new Map<string, string>();
+      const lastMeta = new Map<string, { targetMax: number; unit: string }>();
       for (const row of rows) {
         const exercise = catalog.get(row.exerciseId);
         if (!exercise) continue;
@@ -312,6 +315,7 @@ export function createDal(db: AppDatabase) {
         });
         byPattern.set(pattern, list);
         lastExercise.set(pattern, row.exerciseId);
+        lastMeta.set(pattern, { targetMax: row.targetMax, unit: exercise.unit });
       }
 
       const weekAllowed = await rowsOf<{ level_ups_allowed: boolean }>(db, sql`
@@ -333,12 +337,15 @@ export function createDal(db: AppDatabase) {
         const exerciseId = lastExercise.get(patternId)!;
         const exercise = catalog.get(exerciseId);
         const suggested = result.suggestedExerciseId ? catalog.get(result.suggestedExerciseId) : undefined;
+        const meta = lastMeta.get(patternId);
         suggestions.push({
           ...result,
           patternId,
           exerciseId,
           exerciseName: exercise?.name ?? exerciseId,
           suggestedName: suggested?.name ?? null,
+          lastTargetMax: meta?.targetMax ?? null,
+          unit: meta?.unit ?? exercise?.unit ?? "reps",
         });
       }
       return suggestions;
@@ -388,6 +395,50 @@ export function createDal(db: AppDatabase) {
     async records(userId: string, asOf: string) {
       const data = await loadVolume(db, userId, asOf);
       return personalRecords(data.logs);
+    },
+
+    async trainingSeries(userId: string, asOf: string) {
+      return rowsOf<{
+        date: string;
+        pattern_id: string;
+        exercise_id: string;
+        exercise_name: string;
+        level: number;
+        unit: string;
+        target_max: number;
+        top: number;
+      }>(db, sql`
+        select ws.date::text as date, e.pattern_id, e.id as exercise_id, e.name as exercise_name,
+               e.level, e.unit, el.target_max, sl.value as top
+        from set_logs sl
+        join exercise_logs el on el.id = sl.exercise_log_id
+        join workout_sessions ws on ws.id = el.workout_session_id
+        join exercises e on e.id = el.exercise_id
+        where el.user_id = ${userId} and el.done = true and ws.date <= ${asOf} and ws.type = 'workout'
+        order by ws.date, e.pattern_id
+      `);
+    },
+
+    async finishedSessions(userId: string, asOf: string) {
+      const rows = await rowsOf<{
+        date: string;
+        day: string | null;
+        energy: number | null;
+        exercises: number;
+      }>(db, sql`
+        select ws.date::text as date, ws.day, ws.energy, count(el.id)::int as exercises
+        from workout_sessions ws
+        left join exercise_logs el on el.workout_session_id = ws.id and el.done = true
+        where ws.user_id = ${userId} and ws.completed_at is not null and ws.date <= ${asOf}
+        group by ws.id, ws.date, ws.day, ws.energy
+        order by ws.date desc
+      `);
+      return rows.map((row) => ({
+        date: row.date,
+        day: row.day,
+        energy: row.energy === null ? null : Number(row.energy),
+        exercises: Number(row.exercises),
+      }));
     },
 
     async currentLevels(userId: string): Promise<LevelCard[]> {

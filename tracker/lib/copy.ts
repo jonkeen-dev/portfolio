@@ -1,3 +1,32 @@
+export function ladderStatusLine(input: {
+  status: string;
+  sessionsAtTop: number;
+  targetMax: number | null;
+  unit: string;
+  nextName?: string | null;
+}): string {
+  if (input.status === "HOLD") return "Lighter week. Level-ups pick back up next week.";
+  if (input.status === "NO_DATA") return "No sessions yet.";
+  const noun = input.unit.startsWith("seconds") ? "seconds" : "reps";
+  const at = input.targetMax ? `${input.targetMax} ${noun}` : "the top of the range";
+  const next = input.nextName?.trim();
+  if (input.status === "READY") {
+    return next ? `2 of 2 sessions at ${at}. You can move to ${next}.` : `2 of 2 sessions at ${at}.`;
+  }
+  if (input.sessionsAtTop >= 1 && next) {
+    return `1 of 2 sessions at ${at}. One more and you can move to ${next}.`;
+  }
+  if (input.sessionsAtTop >= 1) return `1 of 2 sessions at ${at}.`;
+  return "0 of 2 sessions at the top of the range.";
+}
+
+export function ladderTag(status: string, sessionsAtTop: number): string | null {
+  if (status === "READY") return "Ready";
+  if (status === "HOLD") return "Lighter week, on hold";
+  if (sessionsAtTop === 1) return "1 of 2";
+  return null;
+}
+
 export function movementStatusLine(input: {
   status: string;
   reason: string;

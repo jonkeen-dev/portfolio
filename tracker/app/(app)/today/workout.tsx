@@ -12,7 +12,7 @@ import { MiniLadder } from "@/components/ui/mini-ladder";
 import { Sheet } from "@/components/ui/sheet";
 import { Stepper } from "@/components/ui/stepper";
 import { Toast } from "@/components/ui/toast";
-import { VideoFacade } from "@/components/video-facade";
+import { ExerciseDetail } from "@/components/exercise-detail";
 import { completeSession } from "@/lib/actions";
 import { savedSetLine, setGuidance } from "@/lib/plan";
 import { seedSetValue } from "@/lib/stepper";
@@ -304,16 +304,16 @@ export function WorkoutView({
                   })}
                 </div>
               ) : null}
-              {current && nextNumber > 0 ? (
-                <div className="row">
+              <div className="action-row">
+                {current && nextNumber > 0 ? (
                   <Button variant="primary" type="button" onClick={() => openSet(entry, nextNumber)}>
                     Log set {nextNumber}
                   </Button>
-                  <Button variant="secondary" type="button" onClick={() => setHowTo(entry)}>
-                    How to
-                  </Button>
-                </div>
-              ) : null}
+                ) : null}
+                <Button variant="secondary" type="button" onClick={() => setHowTo(entry)}>
+                  How to
+                </Button>
+              </div>
             </section>
           );
         })}
@@ -413,19 +413,21 @@ export function WorkoutView({
       ) : null}
 
       {howTo ? (
-        <Sheet open onOpenChange={(open) => { if (!open) setHowTo(null); }} title={howTo.name} description={howTo.description || "How to do this exercise."}>
-          <div className="stack">
-            {howTo.description ? <p>{howTo.description}</p> : null}
-            {howTo.cues.slice(0, 3).length > 0 ? (
-              <ul className="prose-list">
-                {howTo.cues.slice(0, 3).map((cue) => (
-                  <li key={cue}>{cue}</li>
-                ))}
-              </ul>
-            ) : null}
-            {howTo.safetyNote ? <p className="card">{howTo.safetyNote}</p> : null}
-            {howTo.video ? <VideoFacade youtubeId={howTo.video.youtubeId} title={howTo.video.title} watchUrl={howTo.video.watchUrl} /> : <p>Demo unavailable.</p>}
-          </div>
+        <Sheet open onOpenChange={(open) => { if (!open) setHowTo(null); }} title={howTo.name} description="A short demo and the first cues.">
+          <ExerciseDetail
+            mode="howto"
+            names={{}}
+            item={{
+              id: howTo.exerciseId,
+              description: howTo.description,
+              cues: howTo.cues,
+              mistakes: howTo.mistakes,
+              safetyNote: howTo.safetyNote,
+              regressionId: howTo.regressionId,
+              progressionId: howTo.progressionId,
+              video: howTo.video,
+            }}
+          />
         </Sheet>
       ) : null}
 

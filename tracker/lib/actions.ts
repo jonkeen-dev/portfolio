@@ -14,6 +14,7 @@ import {
   exercises,
   invites,
   levelEvents,
+  patterns,
   user,
   workoutSessions,
 } from "@/lib/db/schema";
@@ -153,6 +154,15 @@ export async function acceptLevel(formData: FormData) {
   if (!result.ok) redirect(`${next}${next.includes("?") ? "&" : "?"}error=${encodeURIComponent(result.error)}`);
   revalidatePath("/today");
   revalidatePath("/ladders");
+  if (next === "/ladders" || next.startsWith("/ladders?")) {
+    const db = getDatabase().db;
+    const [exercise] = await db.select().from(exercises).where(eq(exercises.id, toExerciseId)).limit(1);
+    const [pattern] = exercise
+      ? await db.select().from(patterns).where(eq(patterns.id, exercise.patternId)).limit(1)
+      : [];
+    const message = `${pattern?.name ?? "Level"} set to ${exercise?.name ?? "the next rung"}.`;
+    redirect(`/ladders?saved=${encodeURIComponent(message)}`);
+  }
   redirect(next);
 }
 
@@ -181,7 +191,9 @@ export async function setLevelManually(formData: FormData) {
   await createDal(db).audit(session.user.id, "level_manual");
   revalidatePath("/ladders");
   revalidatePath("/today");
-  redirect("/ladders");
+  const [pattern] = await db.select().from(patterns).where(eq(patterns.id, patternId)).limit(1);
+  const message = `${pattern?.name ?? "Level"} set to ${exercise.name}.`;
+  redirect(`/ladders?saved=${encodeURIComponent(message)}`);
 }
 
 export async function saveAssessment(formData: FormData) {

@@ -61,7 +61,7 @@ export function ChipGroup({
             tabIndex={index === selected ? 0 : -1}
             onClick={() => onChange(option.value)}
           >
-            {option.label}
+            <span className="btn-label">{option.label}</span>
           </button>
         );
       })}

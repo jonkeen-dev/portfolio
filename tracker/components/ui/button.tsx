@@ -36,7 +36,7 @@ export function Button({
       aria-disabled={isDisabled || undefined}
       {...props}
     >
-      {pending ? pendingLabel : children}
+      <span className="btn-label">{pending ? pendingLabel : children}</span>
     </button>
   );
 }
@@ -57,13 +57,13 @@ export function ButtonLink({
   if (href.startsWith("/api/") || href.startsWith("http")) {
     return (
       <a className={classNameValue} href={href} {...rest}>
-        {children}
+        <span className="btn-label">{children}</span>
       </a>
     );
   }
   return (
     <Link className={classNameValue} href={href} {...rest}>
-      {children}
+      <span className="btn-label">{children}</span>
     </Link>
   );
 }

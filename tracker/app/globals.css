@@ -142,7 +142,7 @@ body {
   max-width: 40rem;
   margin: 0 auto;
   min-width: 0;
-  overflow-wrap: break-word;
+  overflow-wrap: normal;
 }
 
 .page-with-nav {
@@ -206,11 +206,15 @@ ol {
   line-height: 1.3;
   font-weight: 700;
   margin: 0;
-  overflow-wrap: break-word;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
 }
 
 .meta {
-  overflow-wrap: break-word;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
 }
 
 .page-header {
@@ -312,7 +316,7 @@ summary {
   justify-content: center;
   gap: 8px;
   min-height: 48px;
-  min-width: 48px;
+  min-width: min(100%, max-content);
   max-width: 100%;
   padding: 12px 16px;
   border-radius: var(--radius-chip);
@@ -321,10 +325,31 @@ summary {
   color: var(--fg);
   font: inherit;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.25;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  white-space: normal;
+}
+
+.btn-label {
+  display: block;
+  max-width: 100%;
+  text-align: center;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  text-wrap: balance;
+}
+
+.stack > .btn .btn-label,
+.action-row .btn .btn-label,
+.row .btn .btn-label,
+.search-field .btn .btn-label {
+  width: 100%;
 }
 
 .stack > .btn {
@@ -356,7 +381,8 @@ summary {
 .btn-chip {
   min-width: 52px;
   min-height: 52px;
-  padding: 8px 12px;
+  padding: 8px 14px;
+  white-space: nowrap;
 }
 
 .btn-chip[aria-checked="true"] {
@@ -405,18 +431,19 @@ summary {
   bottom: 0;
   z-index: 20;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0;
+  flex-wrap: nowrap;
+  gap: 8px;
   min-height: calc(72px + env(safe-area-inset-bottom));
-  padding: 0 0 env(safe-area-inset-bottom);
+  padding: 0 8px env(safe-area-inset-bottom);
   background: var(--surface);
   border-top: 1px solid var(--track);
+  overflow-x: auto;
 }
 
 .nav a {
-  flex: 1 1 48px;
+  flex: 1 0 auto;
   min-height: 72px;
-  min-width: 48px;
+  min-width: max-content;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -428,7 +455,10 @@ summary {
   font-size: 0.8125rem;
   line-height: 1.15;
   font-weight: 600;
-  padding: 6px 2px;
+  padding: 6px 4px;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .nav a[aria-current="page"] {
@@ -1032,4 +1062,247 @@ iframe.video {
 .done-line {
   color: var(--done);
   font-weight: 700;
+}
+
+.action-row,
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.action-row > .btn,
+.action-row > form,
+.row > .btn,
+.row > form,
+.row > a.btn {
+  flex: 1 1 auto;
+  min-width: min(100%, max-content);
+  max-width: 100%;
+}
+
+.action-row > form,
+.row > form {
+  display: flex;
+}
+
+.action-row .btn,
+.row .btn {
+  width: 100%;
+}
+
+.page ul.plain-list,
+.page ol.rung-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.plain-list,
+.rung-list {
+  display: grid;
+  gap: 8px;
+}
+
+.rung-item {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-height: 48px;
+  padding: 8px;
+  border-radius: 12px;
+}
+
+.rung-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rung-mark {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid var(--outline);
+  background: transparent;
+  justify-self: center;
+}
+
+.rung-item-past .rung-mark {
+  background: var(--outline);
+}
+
+.rung-item-current {
+  outline: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+}
+
+.rung-item-current .rung-mark {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.rung-item-next .rung-mark {
+  border-style: dashed;
+  border-color: var(--accent-text);
+}
+
+.choice-stack {
+  display: grid;
+  gap: 8px;
+  border: 0;
+  padding: 0;
+}
+
+.choice-card input {
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  padding: 0;
+  flex: 0 0 auto;
+}
+
+.search-field {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.search-field label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.chip-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.chip-scroll .chip-row {
+  flex-wrap: nowrap;
+  width: max-content;
+  min-width: 100%;
+}
+
+.tag-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.callout {
+  border: 2px solid var(--outline);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 0;
+}
+
+.linkish {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent-text);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.stat-aside {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.week-chart {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 4px;
+  align-items: end;
+  height: 140px;
+  margin: 8px 0 16px;
+}
+
+.week-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+  min-width: 0;
+  gap: 4px;
+  border-radius: 8px;
+  padding: 4px 0;
+}
+
+.week-col.is-current {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 1px;
+}
+
+.week-bar {
+  width: min(100%, 14px);
+  background: var(--accent);
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+}
+
+.week-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.2;
+}
+
+.spark {
+  flex: 0 0 auto;
+  color: var(--accent-text);
+}
+
+.line-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.chart-line,
+.chart-dot {
+  stroke: var(--accent-text);
+  fill: var(--accent-text);
+  stroke-width: 2;
+}
+
+.chart-range {
+  stroke: var(--outline);
+  stroke-width: 2;
+}
+
+.chart-dot-change {
+  fill: var(--accent);
+  stroke: var(--accent-ink);
+}
+
+.session-link {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 8px 0;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.is-hidden {
+  display: none;
+}
+
+.url-text {
+  overflow-wrap: anywhere;
 }

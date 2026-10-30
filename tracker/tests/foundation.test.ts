@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import { loadWeeks } from "../lib/content";
-import { movementStatusLine, sessionDoneLine, setButtonName } from "../lib/copy";
-import { formatCalendarDate, formatZonedDateTime } from "../lib/format";
+import { ladderStatusLine, movementStatusLine, sessionDoneLine, setButtonName } from "../lib/copy";
+import { formatCalendarDate, formatWeekdayDate, formatZonedDateTime } from "../lib/format";
+import { matchesLibrary } from "../lib/library";
+import { formatHoldClock, groupMovementSeries, recentSessionLine } from "../lib/progress";
 import { clampCount, seedSetValue } from "../lib/stepper";
 
 describe("stepper", () => {
@@ -77,5 +79,66 @@ describe("week notes", () => {
     expect(week12?.focus).toBe("Taper and retest");
     expect(week12?.coachNote).toMatch(/Week 1 numbers/);
     expect(week12?.setsMain).toBe(2);
+  });
+});
+
+describe("ladders and progress copy", () => {
+  it("states how close a movement is to the next rung", () => {
+    expect(
+      ladderStatusLine({
+        status: "NOT_YET",
+        sessionsAtTop: 1,
+        targetMax: 12,
+        unit: "reps",
+        nextName: "Low Incline Push-Up",
+      }),
+    ).toBe("1 of 2 sessions at 12 reps. One more and you can move to Low Incline Push-Up.");
+    expect(
+      ladderStatusLine({
+        status: "HOLD",
+        sessionsAtTop: 2,
+        targetMax: 12,
+        unit: "reps",
+        nextName: "Low Incline Push-Up",
+      }),
+    ).toBe("Lighter week. Level-ups pick back up next week.");
+    expect(ladderStatusLine({ status: "NO_DATA", sessionsAtTop: 0, targetMax: null, unit: "reps" })).toBe(
+      "No sessions yet.",
+    );
+  });
+
+  it("formats holds, weekdays, and recent sessions", () => {
+    expect(formatHoldClock(114)).toBe("1:54");
+    expect(formatWeekdayDate("2026-10-21")).toBe("Wed, Oct 21");
+    expect(
+      recentSessionLine({ when: "Wed, Oct 21", day: "B", exercises: 5, energy: 4 }),
+    ).toBe("Wed, Oct 21 · Day B · 5 exercises · energy 4");
+  });
+
+  it("marks a level change on the movement series", () => {
+    const series = groupMovementSeries([
+      { date: "2026-10-14", patternId: "squat", exerciseId: "SQ1", exerciseName: "Box Squat", level: 1, unit: "reps", top: 10, targetMax: 12 },
+      { date: "2026-10-14", patternId: "squat", exerciseId: "SQ1", exerciseName: "Box Squat", level: 1, unit: "reps", top: 12, targetMax: 12 },
+      { date: "2026-10-16", patternId: "squat", exerciseId: "SQ2", exerciseName: "Bodyweight Squat", level: 2, unit: "reps", top: 8, targetMax: 12 },
+    ]);
+    expect(series).toHaveLength(1);
+    expect(series[0]?.points.map((point) => [point.date, point.top, point.levelChange])).toEqual([
+      ["2026-10-14", 12, false],
+      ["2026-10-16", 8, true],
+    ]);
+  });
+
+  it("filters the library without a round trip", () => {
+    const items = [
+      { name: "Wall Push-Up", patternId: "push", patternLabel: "Push", cues: ["Straight line"] },
+      { name: "Box Squat", patternId: "squat", patternLabel: "Squat", cues: ["Sit back"] },
+      { name: "Wall Slide", patternId: "warmup", patternLabel: "Warm-up", cues: ["Ribs down"] },
+    ];
+    expect(items.filter((item) => matchesLibrary(item, "wall", "all")).map((item) => item.name)).toEqual([
+      "Wall Push-Up",
+      "Wall Slide",
+    ]);
+    expect(items.filter((item) => matchesLibrary(item, "wall", "push")).map((item) => item.name)).toEqual(["Wall Push-Up"]);
+    expect(items.filter((item) => matchesLibrary(item, "", "warmup")).map((item) => item.name)).toEqual(["Wall Slide"]);
   });
 });

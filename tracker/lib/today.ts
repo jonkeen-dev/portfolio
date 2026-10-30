@@ -52,7 +52,10 @@ export type TodayItem = {
   aimRir: number;
   nextName: string | null;
   sessionsAtTop: number;
-  video: { youtubeId: string; title: string; watchUrl: string } | null;
+  mistakes: string[];
+  regressionId: string | null;
+  progressionId: string | null;
+  video: { youtubeId: string; title: string; watchUrl: string; duration: string | null } | null;
 };
 
 export type PrepItem = { name: string; detail: string; kind: "warmup" | "cooldown" };
@@ -328,9 +331,12 @@ export async function loadToday(userId: string, date: string): Promise<TodayMode
       safetyNote: exercise.safetyNote,
       nextName: next?.name ?? null,
       sessionsAtTop: suggestion?.sessionsAtTop ?? 0,
+      mistakes: exercise.mistakes,
+      regressionId: exercise.regressionId,
+      progressionId: exercise.progressionId,
       video:
         video?.youtubeId && video.status === "ok"
-          ? { youtubeId: video.youtubeId, title: video.title, watchUrl: video.url }
+          ? { youtubeId: video.youtubeId, title: video.title, watchUrl: video.url, duration: video.duration }
           : null,
       logged,
       previous: (previous.get(exercise.id)?.values ?? []).filter((value) => typeof value === "number"),
