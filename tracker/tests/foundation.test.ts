@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import { loadWeeks } from "../lib/content";
 import { ladderStatusLine, movementStatusLine, sessionDoneLine, setButtonName } from "../lib/copy";
+import { deleteAccountError } from "../lib/account";
+import { hashMagicToken, inviteMessage } from "../lib/invite-link";
 import { formatCalendarDate, formatWeekdayDate, formatZonedDateTime } from "../lib/format";
 import { matchesLibrary } from "../lib/library";
 import { formatHoldClock, groupMovementSeries, recentSessionLine } from "../lib/progress";
@@ -126,6 +128,17 @@ describe("ladders and progress copy", () => {
       ["2026-10-14", 12, false],
       ["2026-10-16", 8, true],
     ]);
+  });
+
+  it("writes an invite with a one-tap link and blocks a stale delete", () => {
+    const message = inviteMessage("Jon", "https://tracker.example/api/auth/magic-link/verify?token=abc");
+    expect(message.subject).toBe("Jon invited you to Calisthenics Tracker");
+    expect(message.text).toContain("Tap to sign in: https://tracker.example/api/auth/magic-link/verify?token=abc");
+    expect(message.text).toContain("72 hours");
+    expect(hashMagicToken("abc")).toHaveLength(43);
+    expect(deleteAccountError("delete", 1000)).toMatch(/DELETE/);
+    expect(deleteAccountError("DELETE", 13 * 60 * 60 * 1000)).toMatch(/12 hours/);
+    expect(deleteAccountError("DELETE", 1000)).toBeNull();
   });
 
   it("filters the library without a round trip", () => {

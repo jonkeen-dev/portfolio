@@ -12,14 +12,19 @@ const EXPIRED = "That link has expired or was already used. Send yourself a new 
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; deleted?: string }>;
 }) {
   const session = await currentSession();
   if (session) redirect("/today");
-  const { error } = await searchParams;
+  const { error, deleted } = await searchParams;
   return (
     <main id="main" tabIndex={-1} className="page">
       <PageHeader title="Calisthenics Tracker" description="Your 12-week bodyweight program and training log." />
+      {deleted ? (
+        <p className="toast" role="status">
+          Your account and training log were deleted.
+        </p>
+      ) : null}
       {error ? (
         <p className="alert" role="alert">
           {EXPIRED}

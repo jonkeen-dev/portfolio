@@ -79,6 +79,9 @@ export default async function ProgressPage() {
   return (
     <>
       <PageHeader title="Progress" />
+      <p>
+        <Link href="/partner">Your partner</Link>
+      </p>
       {!hasNumbers ? <p>Your numbers show up here after your first session.</p> : null}
       {hasNumbers ? (
         <>
