@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode, Ref } from "react";
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode, Ref } from "react";
 import Link from "next/link";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "chip" | "stepper";
@@ -46,22 +46,23 @@ export function ButtonLink({
   variant = "secondary",
   className,
   children,
+  ...rest
 }: {
   href: string;
   variant?: ButtonVariant;
   className?: string;
   children: ReactNode;
-}) {
+} & AnchorHTMLAttributes<HTMLAnchorElement>) {
   const classNameValue = classes(variant, className);
   if (href.startsWith("/api/") || href.startsWith("http")) {
     return (
-      <a className={classNameValue} href={href}>
+      <a className={classNameValue} href={href} {...rest}>
         {children}
       </a>
     );
   }
   return (
-    <Link className={classNameValue} href={href}>
+    <Link className={classNameValue} href={href} {...rest}>
       {children}
     </Link>
   );

@@ -63,26 +63,33 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
   expect(prior.ok(), await prior.text()).toBeTruthy();
 
   await page.goto("/today?on=2026-10-26");
-  await expect(page.getByRole("heading", { name: "Today" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Full body", exact: true })).toBeVisible();
   await expect(page.getByText("Week 3")).toBeVisible();
   await expectAccessible(page, "today");
 
   for (const setNumber of [1, 2, 3]) {
-    await page.getByRole("button", { name: `Box Squat, set ${setNumber}`, exact: true }).click();
+    await page.getByRole("button", { name: `Log set ${setNumber}` }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByRole("spinbutton", { name: "Reps" })).toHaveValue("12");
     if (setNumber === 1) await expectAccessible(page, "set dialog");
     await dialog.getByRole("button", { name: "Save set" }).click();
     await expect(dialog).toBeHidden();
+    if (setNumber < 3) {
+      await expect(page.getByRole("timer")).toBeVisible();
+      await page.getByRole("button", { name: "Skip" }).click();
+    }
   }
 
+  const timer = page.getByRole("timer");
+  if (await timer.isVisible()) await page.getByRole("button", { name: "Skip" }).click();
   await page.screenshot({ path: "/opt/cursor/artifacts/today.png", fullPage: true });
   await page.getByRole("button", { name: "Finish session" }).click();
+  await page.getByRole("button", { name: "Save and finish" }).click();
   await expect(page.getByText("Ready to level up")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Accept Bodyweight Squat" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Move up to Bodyweight Squat" })).toBeVisible();
   await page.screenshot({ path: "/opt/cursor/artifacts/level-up.png", fullPage: true });
-  await page.getByRole("button", { name: "Accept Bodyweight Squat" }).click();
-  await expect(page.getByText("You're on Bodyweight Squat.")).toBeVisible();
+  await page.getByRole("button", { name: "Move up to Bodyweight Squat" }).click();
+  await expect(page.getByText("Bodyweight Squat").first()).toBeVisible();
 
   await page.goto("/ladders");
   await expect(page.getByRole("heading", { name: "Ladders" })).toBeVisible();
@@ -149,6 +156,46 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
   await page.goto("/partner");
   await expect(page.getByRole("heading", { name: "Partner" })).toBeVisible();
   await expectAccessible(page, "partner");
+
+  await page.goto("/today?on=2026-10-21");
+  await expect(page.getByRole("heading", { name: "Full body", exact: true })).toBeVisible();
+  await expect(page.getByText("Day B")).toBeVisible();
+  let guard = 0;
+  while (guard < 16 && (await page.getByRole("button", { name: /^Log set / }).count()) > 0) {
+    guard += 1;
+    await page.getByRole("button", { name: /^Log set / }).first().click();
+    const dialog = page.getByRole("dialog");
+    if (guard === 1) await expectAccessible(page, "day b set dialog");
+    const start = dialog.getByRole("button", { name: "Start" });
+    if ((await start.count()) > 0) {
+      await expectAccessible(page, "hold timer");
+      await start.click();
+      await dialog.getByRole("button", { name: "Stop" }).click();
+      const saveLeft = dialog.getByRole("button", { name: "Save left side" });
+      if ((await saveLeft.count()) > 0) {
+        await saveLeft.click();
+        await dialog.getByRole("button", { name: "Start" }).click();
+        await dialog.getByRole("button", { name: "Stop" }).click();
+      }
+    }
+    await dialog.getByRole("button", { name: "Save set" }).click();
+    await expect(dialog).toBeHidden();
+    const rest = page.getByRole("timer");
+    if (await rest.isVisible()) {
+      if (guard === 1) await expectAccessible(page, "rest bar");
+      await page.getByRole("button", { name: "Skip" }).click();
+      await expect(rest).toBeHidden();
+    }
+  }
+  await page.getByRole("button", { name: "Finish session" }).click();
+  await expectAccessible(page, "finish sheet");
+  await page.getByRole("button", { name: "Save and finish" }).click();
+  await expect(page.getByText(/Done\. \d+ exercise/)).toBeVisible();
+
+  await page.goto("/today?on=2026-10-22");
+  await expect(page.getByRole("heading", { name: "Rest day" })).toBeVisible();
+  await expect(page.getByText(/Next: Friday/)).toBeVisible();
+  await expectAccessible(page, "rest day");
 
   await page.context().clearCookies();
   await page.goto("/today");
