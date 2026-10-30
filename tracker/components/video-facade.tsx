@@ -2,8 +2,21 @@
 
 import { useState } from "react";
 
-export function VideoFacade({ youtubeId, title, watchUrl }: { youtubeId: string; title: string; watchUrl: string }) {
+import { Button } from "@/components/ui/button";
+
+export function VideoFacade({
+  youtubeId,
+  title,
+  watchUrl,
+  duration,
+}: {
+  youtubeId: string;
+  title: string;
+  watchUrl: string;
+  duration?: string | null;
+}) {
   const [play, setPlay] = useState(false);
+  const label = duration ? `Play demo (${duration})` : "Play demo";
   return (
     <div className="stack">
       {play ? (
@@ -15,11 +28,13 @@ export function VideoFacade({ youtubeId, title, watchUrl }: { youtubeId: string;
           allowFullScreen
         />
       ) : (
-        <button className="tap" type="button" onClick={() => setPlay(true)}>
-          Play demo: {title}
-        </button>
+        <Button type="button" onClick={() => setPlay(true)} aria-label={`${label}: ${title}`}>
+          {label}
+        </Button>
       )}
-      <a href={watchUrl}>Open on YouTube</a>
+      <a className="tap" href={watchUrl}>
+        Open on YouTube
+      </a>
     </div>
   );
 }

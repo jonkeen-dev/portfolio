@@ -3,6 +3,7 @@
 import { useTheme } from "next-themes";
 import { useState, useSyncExternalStore } from "react";
 
+import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 
 export function ThemeChooser() {
@@ -42,13 +43,17 @@ export function ThemeChooser() {
 
 export function PasskeyButton() {
   const [message, setMessage] = useState("");
+  const [pending, setPending] = useState(false);
   return (
     <div className="stack">
-      <button
-        className="tap"
+      <Button
         type="button"
+        pending={pending}
+        pendingLabel="Saving…"
         onClick={async () => {
+          setPending(true);
           const result = await authClient.passkey.addPasskey({ name: "This phone" }).catch(() => ({ error: { message: "no" } }));
+          setPending(false);
           if (result && "error" in result && result.error) {
             setMessage("Passkey was not saved. Try again on Android Chrome, or keep using email links.");
             return;
@@ -57,23 +62,26 @@ export function PasskeyButton() {
         }}
       >
         Add a passkey
-      </button>
+      </Button>
       {message ? <p role="status">{message}</p> : null}
     </div>
   );
 }
 
 export function SignOutButton() {
+  const [pending, setPending] = useState(false);
   return (
-    <button
-      className="tap"
+    <Button
       type="button"
+      pending={pending}
+      pendingLabel="Signing out…"
       onClick={async () => {
+        setPending(true);
         await authClient.signOut();
         window.location.href = "/sign-in";
       }}
     >
       Sign out
-    </button>
+    </Button>
   );
 }

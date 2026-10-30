@@ -1,163 +1,166 @@
-import { acceptLevel, completeSession, saveAssessment } from "@/lib/actions";
+import { sessionDoneLine } from "@/lib/copy";
+import { displayTitle, weekdayName } from "@/lib/plan";
 import { currentProfile, currentSession } from "@/lib/session";
 import { loadToday, todayIso } from "@/lib/today";
 import { isIsoDate } from "@/lib/validators";
+import { ButtonLink } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
+import { ProgressSegments } from "@/components/ui/progress-segments";
 
-import { Logger } from "./logger";
+import { AssessmentStepper } from "./assessment";
+import { CoachNote, DateControl, LevelUpCard } from "./bits";
+import { WorkoutView } from "./workout";
 
 export const metadata = { title: "Today" };
 
-export default async function TodayPage({ searchParams }: { searchParams: Promise<{ on?: string; error?: string }> }) {
+export default async function TodayPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ on?: string; error?: string; test?: string; saved?: string }>;
+}) {
   const session = await currentSession();
   if (!session) return null;
   const profile = await currentProfile(session.user.id);
   if (!profile) return null;
   const query = await searchParams;
-  const requested = query.on && isIsoDate(query.on) ? query.on : todayIso(profile.timezone);
+  const today = todayIso(profile.timezone);
+  const requested = query.on && isIsoDate(query.on) ? query.on : today;
   const model = await loadToday(session.user.id, requested);
   if (!model) return null;
+  const title = model.rest || model.outside ? "Rest day" : displayTitle(model.title);
+  const eyebrow = (
+    <>
+      <span className="nowrap">{weekdayName(model.date)}</span>
+      <span className="nowrap">Week {model.week} of 12</span>
+      {model.phaseName ? <span className="nowrap">{model.phaseName}</span> : null}
+      {model.day ? <span className="nowrap">Day {model.day}</span> : null}
+    </>
+  );
+  const doneCount = model.items.filter((item) => item.logged.every((value) => typeof value === "number")).length;
   const ready = model.completed
     ? model.suggestions.filter((item) => item.status === "READY" && item.suggestedExerciseId && item.suggestedName)
     : [];
+  const testIndex = Number(query.test ?? "0");
+  const warmup = model.prep.filter((entry) => entry.kind === "warmup");
+  const cooldown = model.prep.filter((entry) => entry.kind === "cooldown");
 
   return (
     <>
-      <h1>Today</h1>
-      <form className="row" action="/today" method="get">
-        <label htmlFor="on">
-          Session date
-          <input id="on" name="on" type="date" defaultValue={model.date} />
-        </label>
-        <button className="tap" type="submit">
-          Show date
-        </button>
-      </form>
+      <PageHeader eyebrow={eyebrow} title={title} />
+      <DateControl date={model.date} today={today} />
       {query.error ? (
         <p className="alert" role="alert">
           {query.error}
         </p>
       ) : null}
-      <p>
-        Week {model.week}
-        {model.phaseName ? ` · ${model.phaseName}` : ""}
-        {model.day ? ` · Day ${model.day}` : ""}
-      </p>
-      <h2>{model.title}</h2>
-      {model.focus ? <p>{model.focus}</p> : null}
-      {model.outside ? <p>That date is outside this 12-week program.</p> : null}
-      {model.rest && !model.outside ? <p>Rest day. Easy walking is plenty.</p> : null}
-      {model.isDeload ? <p>Deload week. Level-ups are on hold.</p> : null}
-      {model.coachNote ? <p className="muted">{model.coachNote}</p> : null}
-
-      {ready.map((item) => {
-        const applied = model.levels.some(
-          (level) => level.patternId === item.patternId && level.exerciseId === item.suggestedExerciseId,
-        );
-        return (
-          <section key={item.patternId} className="card" aria-labelledby={`ready-${item.patternId}`}>
-            <h2 id={`ready-${item.patternId}`}>{applied ? "Level saved" : "Ready to level up"}</h2>
-            <p>
-              {applied
-                ? `You're on ${item.suggestedName}.`
-                : `${item.exerciseName} can move to ${item.suggestedName}.`}
-            </p>
-            <p>{item.reason}</p>
-            {item.tooHard ? <p>{item.tooHard.message}</p> : null}
-            {applied ? null : (
-              <form action={acceptLevel}>
-                <input type="hidden" name="date" value={model.date} />
-                <input type="hidden" name="patternId" value={item.patternId} />
-                <input type="hidden" name="toExerciseId" value={item.suggestedExerciseId ?? ""} />
-                <input type="hidden" name="next" value={`/today?on=${model.date}`} />
-                <button className="tap primary" type="submit">
-                  Accept {item.suggestedName}
-                </button>
-              </form>
-            )}
-          </section>
-        );
-      })}
-
-      {model.prep.length > 0 ? (
-        <details className="card">
-          <summary className="tap">Warm-up and cool-down</summary>
-          <ul>
-            {model.prep.map((entry) => (
-              <li key={`${entry.name}-${entry.detail}`}>
-                {entry.name}
-                {entry.detail ? ` — ${entry.detail}` : ""}
-              </li>
-            ))}
-          </ul>
-        </details>
+      {model.items.length > 0 ? (
+        <ProgressSegments
+          done={doneCount}
+          total={model.items.length}
+          label={`${doneCount} of ${model.items.length} done · about ${model.estMinutes || 25} minutes`}
+        />
       ) : null}
+      {model.completed ? <p className="done-line">{sessionDoneLine(model.items)}</p> : null}
+      {model.focus ? <p>{model.focus}</p> : null}
+      {model.coachNote ? <CoachNote week={model.week} note={model.coachNote} /> : null}
+      {model.isDeload ? <p>Lighter week, so level-ups wait until next week.</p> : null}
+      {model.outside ? (
+        <section className="card">
+          <p>This date is outside your 12 weeks.</p>
+          <ButtonLink href="/today" variant="primary">
+            Back to today
+          </ButtonLink>
+        </section>
+      ) : null}
+      {model.rest && !model.outside ? (
+        <>
+          <p>Nothing planned today. A walk is a good idea.</p>
+          {model.nextSession ? (
+            <section className="card">
+              <h2>
+                Next: {model.nextSession.weekday} · Day {model.nextSession.day} · {model.nextSession.title} · about{" "}
+                {model.nextSession.minutes} minutes
+              </h2>
+              <ButtonLink href={`/today?on=${model.nextSession.date}`} variant="secondary">
+                Preview
+              </ButtonLink>
+            </section>
+          ) : null}
+          {model.weekDots.length > 0 ? (
+            <section className="card" aria-label="This week">
+              <h2>This week</h2>
+              <ul className="week-dots">
+                {model.weekDots.map((dot) => (
+                  <li key={dot.date}>
+                    <span className={dot.done ? "dot is-done" : "dot"} aria-hidden="true" />
+                    {dot.label}
+                    {dot.done ? <span className="sr-only">, done</span> : ""}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+        </>
+      ) : null}
+
+      {ready.map((item) => (
+        <LevelUpCard
+          key={item.patternId}
+          date={model.date}
+          patternId={item.patternId}
+          patternName={model.items.find((entry) => entry.patternId === item.patternId)?.patternName ?? item.exerciseName}
+          exerciseName={item.exerciseName}
+          suggestedName={item.suggestedName ?? ""}
+          suggestedId={item.suggestedExerciseId ?? ""}
+          reason={item.reason}
+        />
+      ))}
 
       {model.tests.length > 0 ? (
-        <form className="stack" action={saveAssessment}>
-          <h2>{model.sessionType === "retest" ? "Retest" : "Baseline"}</h2>
-          <input type="hidden" name="phase" value={model.sessionType === "retest" ? "retest" : "baseline"} />
-          <input type="hidden" name="date" value={model.date} />
-          {model.tests.map((test) => (
-            <fieldset key={test.id} className="card">
-              <legend>{test.name}</legend>
-              <p className="muted">{test.protocol}</p>
-              {test.patternId ? (
-                <label htmlFor={`exercise-${test.id}`}>
-                  Starting exercise
-                  <select id={`exercise-${test.id}`} name={`exercise:${test.id}`} defaultValue="">
-                    <option value="">Not tested</option>
-                    {model.exerciseChoices
-                      .filter((choice) => choice.patternId === test.patternId)
-                      .map((choice) => (
-                        <option key={choice.id} value={choice.id}>
-                          Level {choice.level}: {choice.name}
-                        </option>
-                      ))}
-                  </select>
-                </label>
-              ) : null}
-              <label htmlFor={`result-${test.id}`}>
-                Result ({test.unit})
-                <input id={`result-${test.id}`} name={`result:${test.id}`} inputMode="decimal" />
-              </label>
-            </fieldset>
-          ))}
-          <button className="tap primary" type="submit">
-            Save assessment
-          </button>
-        </form>
+        <AssessmentStepper
+          date={model.date}
+          phase={model.sessionType === "retest" ? "retest" : "baseline"}
+          tests={model.tests}
+          choices={model.exerciseChoices}
+          startIndex={Number.isFinite(testIndex) && testIndex > 0 ? testIndex : 0}
+          saved={query.saved === "1"}
+        />
       ) : null}
 
+      {warmup.length > 0 ? <PrepList title={`Warm-up · ${warmup.length} moves, about 5 minutes`} items={warmup} /> : null}
       {model.items.length > 0 ? (
-        <Logger
+        <WorkoutView
           date={model.date}
           day={model.day}
           sessionType={model.sessionType}
           items={model.items}
+          completed={model.completed}
         />
       ) : null}
-
-      {model.items.length > 0 && !model.completed ? (
-        <form className="stack" action={completeSession}>
-          <input type="hidden" name="date" value={model.date} />
-          <input type="hidden" name="sessionType" value={model.sessionType} />
-          <label htmlFor="energy">
-            Energy (optional)
-            <select id="energy" name="energy" defaultValue="">
-              <option value="">Skip</option>
-              <option value="1">1, very flat</option>
-              <option value="2">2</option>
-              <option value="3">3, okay</option>
-              <option value="4">4</option>
-              <option value="5">5, great</option>
-            </select>
-          </label>
-          <button className="tap primary" type="submit">
-            Finish session
-          </button>
-        </form>
+      {cooldown.length > 0 ? <PrepList title={`Cool-down · ${cooldown.length} moves, about 5 minutes`} items={cooldown} /> : null}
+      {model.completed && model.nextSession ? (
+        <p>
+          Next session: {model.nextSession.weekday} · Day {model.nextSession.day}
+        </p>
       ) : null}
-      {model.completed ? <p>Session finished. Suggestions use every log through this date.</p> : null}
     </>
+  );
+}
+
+function PrepList({ title, items }: { title: string; items: Array<{ name: string; detail: string }> }) {
+  return (
+    <details className="card">
+      <summary>{title}</summary>
+      <ul className="prose-list">
+        {items.map((entry) => (
+          <li key={`${entry.name}-${entry.detail}`}>
+            <label className="choice">
+              <input type="checkbox" /> {entry.name}
+              {entry.detail ? ` — ${entry.detail}` : ""}
+            </label>
+          </li>
+        ))}
+      </ul>
+    </details>
   );
 }

@@ -1,62 +1,67 @@
 import { asc, eq } from "drizzle-orm";
 
-import { VideoFacade } from "@/components/video-facade";
+import { LibraryBrowser, type LibraryEntry } from "@/components/library-browser";
+import { PageHeader } from "@/components/ui/page-header";
+import { createDal } from "@/lib/db/access";
 import { getDatabase } from "@/lib/db";
-import { exercises, videos } from "@/lib/db/schema";
+import { exercises, patterns, videos } from "@/lib/db/schema";
+import { currentSession } from "@/lib/session";
 
 export const metadata = { title: "Library" };
 
-export default async function LibraryPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  const { q } = await searchParams;
-  const query = (q ?? "").trim().toLowerCase();
+const LABELS: Record<string, string> = {
+  push: "Push",
+  pull: "Pull",
+  squat: "Squat",
+  hinge: "Hinge",
+  core: "Core",
+  lateral_core: "Side core",
+  warmup: "Warm-up",
+  cooldown: "Cool-down",
+};
+
+export default async function LibraryPage() {
+  const session = await currentSession();
+  if (!session) return null;
   const db = getDatabase().db;
-  const [exerciseRows, videoRows] = await Promise.all([
-    db.select().from(exercises).orderBy(asc(exercises.name)),
+  const [exerciseRows, videoRows, patternRows, levels] = await Promise.all([
+    db.select().from(exercises).orderBy(asc(exercises.level), asc(exercises.name)),
     db.select().from(videos).where(eq(videos.role, "primary")),
+    db.select().from(patterns),
+    session ? createDal(db).currentLevels(session.user.id) : Promise.resolve([]),
   ]);
+  const names = new Map(patternRows.map((row) => [row.id, row.name]));
+  for (const [id, label] of Object.entries(LABELS)) names.set(id, label);
   const primary = new Map(videoRows.map((row) => [row.exerciseId, row]));
-  const shown = exerciseRows.filter((row) => {
-    if (row.equipment === "kettlebell") return false;
-    if (!query) return true;
-    return row.name.toLowerCase().includes(query) || row.patternId.includes(query) || row.id.toLowerCase().includes(query);
-  });
+  const currentIds = new Set(levels.map((level) => level.exerciseId));
+  const items: LibraryEntry[] = exerciseRows
+    .filter((row) => row.equipment !== "kettlebell")
+    .map((row) => {
+      const video = primary.get(row.id);
+      return {
+        id: row.id,
+        name: row.name,
+        patternId: row.patternId,
+        patternLabel: names.get(row.patternId) ?? row.patternId,
+        level: row.level,
+        description: row.description,
+        cues: row.cues,
+        mistakes: row.mistakes,
+        safetyNote: row.safetyNote,
+        regressionId: row.regressionId,
+        progressionId: row.progressionId,
+        current: currentIds.has(row.id),
+        video:
+          video?.youtubeId && video.status === "ok"
+            ? { youtubeId: video.youtubeId, title: video.title, watchUrl: video.url, duration: video.duration }
+            : null,
+      };
+    });
 
   return (
     <>
-      <h1>Library</h1>
-      <form className="stack" action="/library" method="get">
-        <label htmlFor="q">
-          Search exercises
-          <input id="q" name="q" defaultValue={q ?? ""} />
-        </label>
-        <button className="tap" type="submit">
-          Search
-        </button>
-      </form>
-      {shown.map((row) => {
-        const video = primary.get(row.id);
-        return (
-          <article key={row.id} className="card">
-            <h2>
-              {row.name} <span className="muted">level {row.level}</span>
-            </h2>
-            <p>{row.description}</p>
-            {row.cues.length > 0 ? (
-              <ul>
-                {row.cues.map((cue) => (
-                  <li key={cue}>{cue}</li>
-                ))}
-              </ul>
-            ) : null}
-            {row.safetyNote ? <p>{row.safetyNote}</p> : null}
-            {video?.youtubeId && video.status === "ok" ? (
-              <VideoFacade youtubeId={video.youtubeId} title={video.title} watchUrl={video.url} />
-            ) : (
-              <p>Demo unavailable.</p>
-            )}
-          </article>
-        );
-      })}
+      <PageHeader title="Library" description="Every exercise in the 12-week program." />
+      <LibraryBrowser items={items} />
     </>
   );
 }

@@ -1,26 +1,33 @@
 import { redirect } from "next/navigation";
 
+import { PageHeader } from "@/components/ui/page-header";
 import { currentSession } from "@/lib/session";
 
 import { SignInForm } from "./sign-in-form";
 
 export const metadata = { title: "Sign in" };
 
+const EXPIRED = "That link has expired or was already used. Send yourself a new one.";
+
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; deleted?: string }>;
 }) {
   const session = await currentSession();
   if (session) redirect("/today");
-  const { error } = await searchParams;
+  const { error, deleted } = await searchParams;
   return (
     <main id="main" tabIndex={-1} className="page">
-      <h1>Sign in</h1>
-      <p>Use a passkey, or ask for a one-time email link. Links expire in 10 minutes.</p>
+      <PageHeader title="Calisthenics Tracker" description="Your 12-week bodyweight program and training log." />
+      {deleted ? (
+        <p className="toast" role="status">
+          Your account and training log were deleted.
+        </p>
+      ) : null}
       {error ? (
         <p className="alert" role="alert">
-          That link is no longer valid. Request a new one.
+          {EXPIRED}
         </p>
       ) : null}
       <SignInForm />
