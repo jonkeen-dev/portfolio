@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { ButtonLink } from "@/components/ui/button";
+import { Keep } from "@/components/ui/keep";
 import { MiniLadder } from "@/components/ui/mini-ladder";
 import { Stepper } from "@/components/ui/stepper";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -45,7 +46,9 @@ export function AssessmentStepper({
         Test {startIndex + 1} of {tests.length} · {test.name}
       </p>
       <h2>{test.name}</h2>
-      <p>{test.protocol}</p>
+      <p>
+        <Keep text={test.protocol} />
+      </p>
       <input type="hidden" name="phase" value={phase} />
       <input type="hidden" name="date" value={date} />
       <input type="hidden" name="testId" value={test.id} />
@@ -68,7 +71,7 @@ export function AssessmentStepper({
               >
                 <MiniLadder level={choice.level} total={total} />
                 <span>
-                  Level {choice.level}: {choice.name}
+                  <Keep text={`Level ${choice.level}: ${choice.name}`} />
                 </span>
               </button>
             );

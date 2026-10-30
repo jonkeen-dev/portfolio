@@ -1,3 +1,4 @@
+import { Keep } from "@/components/ui/keep";
 import { PageHeader } from "@/components/ui/page-header";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { saveWorkoutPrefs } from "@/lib/actions";
@@ -34,15 +35,22 @@ export default async function WorkoutSettingsPage({ searchParams }: { searchPara
             <input type="radio" name="restTimer" value="off" defaultChecked={workout.restTimer === "off"} /> Off
           </label>
         </fieldset>
-        <label className="choice">
-          <input type="checkbox" name="holdLeadIn" defaultChecked={workout.holdLeadIn} /> Count down 3-2-1 before a hold
-        </label>
-        <label className="choice">
-          <input type="checkbox" name="vibrate" defaultChecked={workout.vibrate} /> Vibrate
-        </label>
-        <label className="choice">
-          <input type="checkbox" name="keepScreenOn" defaultChecked={workout.keepScreenOn} /> Keep screen on during a session
-        </label>
+          <label className="choice">
+            <input type="checkbox" name="holdLeadIn" defaultChecked={workout.holdLeadIn} />
+            <span>
+              <Keep text="Count down 3-2-1 before a hold" />
+            </span>
+          </label>
+          <label className="choice">
+            <input type="checkbox" name="vibrate" defaultChecked={workout.vibrate} />
+            <span>Vibrate</span>
+          </label>
+          <label className="choice">
+            <input type="checkbox" name="keepScreenOn" defaultChecked={workout.keepScreenOn} />
+            <span>
+              <Keep text="Keep screen on during a session" />
+            </span>
+          </label>
         <SubmitButton variant="secondary">Save workout</SubmitButton>
       </form>
     </>

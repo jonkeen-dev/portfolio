@@ -1,4 +1,5 @@
 import { OptionalShell } from "@/components/optional-shell";
+import { Keep } from "@/components/ui/keep";
 import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = { title: "Help" };
@@ -18,7 +19,9 @@ export default function HelpPage() {
         when to move up.
       </p>
       <h2>Lighter weeks</h2>
-      <p>Weeks 4 and 8 use fewer sets and easier effort, and level-ups wait. Your progress holds while you recover.</p>
+      <p>
+        <Keep text="Weeks 4 and 8 use fewer sets and easier effort, and level-ups wait. Your progress holds while you recover." />
+      </p>
       <p>
         <a href="/privacy">Privacy</a>
       </p>

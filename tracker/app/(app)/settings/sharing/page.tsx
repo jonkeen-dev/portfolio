@@ -81,7 +81,12 @@ export default async function SharingPage({
           Handle
           <input id="handle" name="handle" defaultValue={handle} minLength={3} maxLength={30} />
         </label>
-        <p className="meta">Used in your link: {host}/u/{handle || "your-name"}</p>
+        <p className="meta">
+          Used in your link: {host}
+          <wbr />
+          /u/
+          <span className="nowrap">{handle || "your-name"}</span>
+        </p>
         <label className="choice">
           <input type="checkbox" name="showName" defaultChecked={profile.showName} /> Show name
         </label>

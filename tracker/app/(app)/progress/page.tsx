@@ -2,6 +2,7 @@ import { asc } from "drizzle-orm";
 import Link from "next/link";
 
 import { MovementList, type MovementView } from "@/components/progress-board";
+import { Keep } from "@/components/ui/keep";
 import { PageHeader } from "@/components/ui/page-header";
 import { createDal } from "@/lib/db/access";
 import { getDatabase } from "@/lib/db";
@@ -124,6 +125,7 @@ export default async function ProgressPage() {
               </div>
             ))}
           </div>
+          <div className="table-scroll">
           <table>
             <caption>Sessions and volume by week</caption>
             <thead>
@@ -148,18 +150,23 @@ export default async function ProgressPage() {
               })}
             </tbody>
           </table>
+          </div>
           <h2>Recent sessions</h2>
           {sessions.length === 0 ? <p>Finished sessions show up here.</p> : null}
           <ul className="plain-list">
             {sessions.map((row) => (
               <li key={`${row.date}-${row.day ?? ""}`}>
                 <Link className="session-link" href={`/today?on=${row.date}`}>
-                  {recentSessionLine({
-                    when: formatWeekdayDate(row.date),
-                    day: row.day,
-                    exercises: row.exercises,
-                    energy: row.energy,
-                  })}
+                  <span className="session-copy">
+                    <Keep
+                      text={recentSessionLine({
+                        when: formatWeekdayDate(row.date),
+                        day: row.day,
+                        exercises: row.exercises,
+                        energy: row.energy,
+                      })}
+                    />
+                  </span>
                 </Link>
               </li>
             ))}
@@ -169,7 +176,7 @@ export default async function ProgressPage() {
           <ul className="plain-list">
             {records.map((row) => (
               <li key={row.exerciseId}>
-                {row.exerciseName} · {row.bestSet} · {formatCalendarDate(row.bestSetDate)}
+                <Keep text={`${row.exerciseName} · ${row.bestSet} · ${formatCalendarDate(row.bestSetDate)}`} />
               </li>
             ))}
           </ul>

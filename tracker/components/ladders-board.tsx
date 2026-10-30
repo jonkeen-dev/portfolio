@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { acceptLevel, setLevelManually } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
+import { Keep } from "@/components/ui/keep";
 import { MiniLadder } from "@/components/ui/mini-ladder";
 import { Sheet } from "@/components/ui/sheet";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -64,12 +65,16 @@ export function LaddersBoard({ cards, initialOpen }: { cards: LadderCard[]; init
               <MiniLadder level={card.currentLevel} total={card.rungTotal} />
               <span>
                 <span className="row-title" id={`ladder-${card.patternId}`}>
-                  {card.name}
+                  <Keep text={card.name} />
                 </span>
                 <span className="meta">
-                  {card.currentName
-                    ? `${card.currentName} · level ${card.currentLevel} of ${card.rungTotal}`
-                    : "No level chosen yet"}
+                  <Keep
+                    text={
+                      card.currentName
+                        ? `${card.currentName} · level ${card.currentLevel} of ${card.rungTotal}`
+                        : "No level chosen yet"
+                    }
+                  />
                 </span>
                 {card.tag ? <span className={card.tag === "Ready" ? "tag tag-now" : "tag"}>{card.tag}</span> : null}
               </span>
@@ -84,12 +89,13 @@ export function LaddersBoard({ cards, initialOpen }: { cards: LadderCard[]; init
                       <li key={rung.id} className={`rung-item rung-item-${state}`}>
                         <span className="rung-mark" aria-hidden="true" />
                         <span className="rung-copy">
-                          <span className="row-title">{rung.name}</span>
+                          <span className="row-title">
+                            <Keep text={rung.name} />
+                          </span>
                           <span className="meta">
-                            Level {rung.level}
-                            {state === "current" ? " · current" : ""}
-                            {state === "next" ? " · next" : ""}
-                            {rung.equipment === "bar" ? " · needs a bar" : ""}
+                            <Keep
+                              text={`Level ${rung.level}${state === "current" ? " · current" : ""}${state === "next" ? " · next" : ""}${rung.equipment === "bar" ? " · needs a bar" : ""}`}
+                            />
                           </span>
                         </span>
                       </li>
@@ -103,7 +109,9 @@ export function LaddersBoard({ cards, initialOpen }: { cards: LadderCard[]; init
                       <input type="hidden" name="patternId" value={card.patternId} />
                       <input type="hidden" name="toExerciseId" value={card.readyId} />
                       <input type="hidden" name="next" value="/ladders" />
-                      <SubmitButton>Move up to {card.readyName}</SubmitButton>
+                      <SubmitButton>
+                        <Keep text={`Move up to ${card.readyName}`} />
+                      </SubmitButton>
                     </form>
                   ) : null}
                   <Button type="button" variant="ghost" onClick={() => openPicker(card)}>
@@ -138,8 +146,7 @@ export function LaddersBoard({ cards, initialOpen }: { cards: LadderCard[]; init
                     onChange={() => setChosen(rung.id)}
                   />
                   <span>
-                    {rung.name}
-                    {rung.equipment === "bar" ? " · needs a bar" : ""}
+                    <Keep text={`${rung.name}${rung.equipment === "bar" ? " · needs a bar" : ""}`} />
                   </span>
                 </label>
               ))}

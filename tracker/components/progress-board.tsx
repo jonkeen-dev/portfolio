@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Keep } from "@/components/ui/keep";
 import { MiniLadder } from "@/components/ui/mini-ladder";
 import { formatCalendarDate } from "@/lib/format";
 
@@ -106,7 +107,7 @@ export function MovementChart({ movement }: { movement: MovementView }) {
       <Button type="button" variant="secondary" aria-pressed={asTable} onClick={() => setAsTable((value) => !value)}>
         {asTable ? "Show as chart" : "Show as table"}
       </Button>
-      <div className={asTable ? undefined : "sr-only"}>
+      <div className={asTable ? "table-scroll" : "sr-only"}>
         <table>
           <caption>
             {movement.name} top set by session
@@ -123,8 +124,7 @@ export function MovementChart({ movement }: { movement: MovementView }) {
               <tr key={`${point.date}-${point.exerciseName}`}>
                 <td>{formatCalendarDate(point.date)}</td>
                 <td>
-                  {point.exerciseName}
-                  {point.levelChange ? " (level change)" : ""}
+                  <Keep text={`${point.exerciseName}${point.levelChange ? " (level change)" : ""}`} />
                 </td>
                 <td>
                   {point.top} {noun}
@@ -154,11 +154,17 @@ export function MovementList({ movements }: { movements: MovementView[] }) {
             >
               <MiniLadder level={movement.level} total={movement.rungTotal} />
               <span>
-                <span className="row-title">{movement.name}</span>
+                <span className="row-title">
+                  <Keep text={movement.name} />
+                </span>
                 <span className="meta">
-                  {movement.exerciseName
-                    ? `${movement.exerciseName} · level ${movement.level}`
-                    : "No level yet"}
+                  <Keep
+                    text={
+                      movement.exerciseName
+                        ? `${movement.exerciseName} · level ${movement.level}`
+                        : "No level yet"
+                    }
+                  />
                 </span>
               </span>
               <Sparkline values={movement.points.map((point) => point.top)} />

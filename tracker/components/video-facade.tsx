@@ -32,7 +32,9 @@ export function VideoFacade({
           {label}
         </Button>
       )}
-      <a href={watchUrl}>Open on YouTube</a>
+      <a className="tap" href={watchUrl}>
+        Open on YouTube
+      </a>
     </div>
   );
 }

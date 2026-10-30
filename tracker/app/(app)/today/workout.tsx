@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { flushQueue, postSet, clientIdFor } from "@/components/sync-set";
 import { useSessionTimer } from "@/components/session-timer";
 import { Button } from "@/components/ui/button";
+import { Keep } from "@/components/ui/keep";
 import { ChipGroup } from "@/components/ui/chip";
 import { CheckIcon } from "@/components/ui/icons";
 import { MiniLadder } from "@/components/ui/mini-ladder";
@@ -264,13 +265,13 @@ export function WorkoutView({
                 <MiniLadder level={entry.level} total={entry.rungTotal} />
                 <span>
                   <span className="row-title">
-                    {entry.name}
+                    <Keep text={entry.name} />
                     {done ? <span className="sr-only">, done</span> : null}
                   </span>
                   <span className="meta">
-                    {entry.patternName} · level {entry.level} of {entry.rungTotal} · {entry.prescribedSets} × {entry.targetMin}–{entry.targetMax}
-                    {unit}
-                    {loggedText.length > 0 ? ` · ${loggedText.join(", ")}` : ""}
+                    <Keep
+                      text={`${entry.patternName} · level ${entry.level} of ${entry.rungTotal} · ${entry.prescribedSets} × ${entry.targetMin}–${entry.targetMax}${unit}${loggedText.length > 0 ? ` · ${loggedText.join(", ")}` : ""}`}
+                    />
                   </span>
                 </span>
                 {done ? (

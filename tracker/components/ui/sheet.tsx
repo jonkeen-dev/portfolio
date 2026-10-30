@@ -4,6 +4,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Keep } from "@/components/ui/keep";
 
 export function Sheet({
   open,
@@ -27,7 +28,9 @@ export function Sheet({
         <Dialog.Content className="sheet" onCloseAutoFocus={onCloseAutoFocus}>
           <div className="sheet-handle" aria-hidden="true" />
           <div className="sheet-head">
-            <Dialog.Title className="sheet-title">{title}</Dialog.Title>
+            <Dialog.Title className="sheet-title">
+              <Keep text={title} />
+            </Dialog.Title>
             <Dialog.Close asChild>
               <Button variant="ghost" className="sheet-close" aria-label="Close">
                 <span aria-hidden="true">✕</span>
