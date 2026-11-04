@@ -119,10 +119,25 @@ export function WorkoutView({
   }, [holdPhase, item, timer.prefs.vibrate]);
 
   const someLogged = items.some((entry) => entry.logged.some((logged, index) => typeof logged === "number" || typeof pendingSync[`${entry.exerciseId}:${index + 1}`] === "number"));
+  const finishDock = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.documentElement.style.setProperty("--finish-dock", someLogged && !completed ? "4.5rem" : "0px");
-    return () => document.documentElement.style.setProperty("--finish-dock", "0px");
+    const node = finishDock.current;
+    if (!someLogged || completed || !node) {
+      document.documentElement.style.setProperty("--finish-dock", "0px");
+      return;
+    }
+    const sync = () => {
+      const height = Math.ceil(node.getBoundingClientRect().height);
+      document.documentElement.style.setProperty("--finish-dock", `${height}px`);
+    };
+    sync();
+    const observer = new ResizeObserver(sync);
+    observer.observe(node);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.setProperty("--finish-dock", "0px");
+    };
   }, [someLogged, completed]);
 
   function shown(entry: TodayItem, index: number): number | null {
@@ -321,7 +336,7 @@ export function WorkoutView({
       </div>
 
       {someLogged && !completed ? (
-        <div className="finish-dock">
+        <div className="finish-dock" ref={finishDock}>
           <Button variant="primary" type="button" onClick={() => setFinishOpen(true)}>
             Finish session
           </Button>

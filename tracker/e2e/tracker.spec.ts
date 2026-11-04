@@ -71,11 +71,65 @@ async function layoutProblems() {
   return hits;
 }
 
+async function finishDockCovered() {
+  const dock = document.querySelector(".finish-dock");
+  if (!dock) return [] as string[];
+  const before = window.scrollY;
+  const gap = 8;
+  const hits: string[] = [];
+
+  function shown(el: Element) {
+    const style = getComputedStyle(el);
+    if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) === 0) return false;
+    if (el.closest("[hidden]")) return false;
+    if (el.closest("details:not([open])")) return false;
+    const rect = el.getBoundingClientRect();
+    return rect.width >= 1 && rect.height >= 1;
+  }
+
+  function label(el: Element) {
+    return (el.getAttribute("aria-label") || el.textContent || el.tagName).replace(/\s+/g, " ").trim().slice(0, 70);
+  }
+
+  try {
+    const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const cards = [...document.querySelectorAll(".exercise-row")].filter(shown);
+    for (const card of cards) {
+      const controls = [...card.querySelectorAll("a, button, input, select, textarea, summary")].filter(shown);
+      const targets = controls.length > 0 ? controls : [card];
+      for (const target of targets) {
+        const delta = target.getBoundingClientRect().bottom - (dock.getBoundingClientRect().top - gap);
+        const next = Math.min(max, Math.max(0, window.scrollY + delta));
+        window.scrollTo(0, next);
+        const bottom = target.getBoundingClientRect().bottom;
+        const dockTop = dock.getBoundingClientRect().top;
+        if (bottom > dockTop + 1) {
+          hits.push(`${label(target)} stays under Finish session`);
+          break;
+        }
+      }
+      if (hits.length > 8) break;
+    }
+  } finally {
+    window.scrollTo(0, before);
+  }
+  return hits;
+}
+
 async function expectFits(page: Page, name: string) {
   for (const width of [320, 360, 412]) {
     await page.setViewportSize({ width, height: 915 });
     const hits = await page.evaluate(layoutProblems);
     expect(hits, `${name} at ${width}px\n${hits.join("\n")}`).toEqual([]);
+  }
+  await page.setViewportSize({ width: 412, height: 915 });
+}
+
+async function expectFinishClears(page: Page, name: string) {
+  for (const width of [320, 360, 412]) {
+    await page.setViewportSize({ width, height: 915 });
+    const hits = await page.evaluate(finishDockCovered);
+    expect(hits, `${name} finish dock at ${width}px\n${hits.join("\n")}`).toEqual([]);
   }
   await page.setViewportSize({ width: 412, height: 915 });
 }
@@ -183,6 +237,18 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
   const timer = page.getByRole("timer");
   if (await timer.isVisible()) await page.getByRole("button", { name: "Skip" }).click();
   await page.screenshot({ path: "/opt/cursor/artifacts/today.png", fullPage: true });
+  await expect(page.getByRole("button", { name: "Finish session" })).toBeVisible();
+  await expectFits(page, "workout with finish");
+  await expectFinishClears(page, "workout with finish");
+  await page.setViewportSize({ width: 320, height: 915 });
+  await page.locator(".exercise-row.is-current").evaluate((el) => el.scrollIntoView({ block: "end", inline: "nearest" }));
+  await page.screenshot({ path: "/opt/cursor/artifacts/finish-dock-320.png" });
+  await page.setViewportSize({ width: 360, height: 915 });
+  await page.locator(".exercise-row.is-current").evaluate((el) => el.scrollIntoView({ block: "end", inline: "nearest" }));
+  await page.screenshot({ path: "/opt/cursor/artifacts/finish-dock-360.png" });
+  await page.setViewportSize({ width: 412, height: 915 });
+  await page.locator(".exercise-row.is-current").evaluate((el) => el.scrollIntoView({ block: "end", inline: "nearest" }));
+  await page.screenshot({ path: "/opt/cursor/artifacts/finish-dock-412.png" });
   await page.getByRole("button", { name: "Finish session" }).click();
   await page.getByRole("button", { name: "Save and finish" }).click();
   await expect(page.getByText("Ready to level up")).toBeVisible();
@@ -340,6 +406,7 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
       await expect(rest).toBeHidden();
     }
   }
+  await expectFinishClears(page, "day b workout");
   await page.getByRole("button", { name: "Finish session" }).click();
   await expectFits(page, "finish sheet");
   await expectAccessible(page, "finish sheet");
