@@ -7,6 +7,7 @@ import { magicLink } from "better-auth/plugins";
 import { and, eq, isNull, ne } from "drizzle-orm";
 
 import { decideRegistration, NEUTRAL_AUTH_MESSAGE } from "@/lib/auth-policy";
+import { PASSKEY_AUTHENTICATOR_SELECTION } from "@/lib/passkey-support";
 import { createDal } from "@/lib/db/access";
 import { getDatabase } from "@/lib/db";
 import { account, invites, passkey as passkeyTable, session as sessionTable, user, verification } from "@/lib/db/schema";
@@ -156,6 +157,7 @@ export const auth = betterAuth({
       rpID: env().WEBAUTHN_RP_ID,
       rpName: env().WEBAUTHN_RP_NAME,
       origin: appOrigin(),
+      authenticatorSelection: PASSKEY_AUTHENTICATOR_SELECTION,
     }),
     nextCookies(),
   ],

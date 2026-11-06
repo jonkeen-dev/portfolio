@@ -2,6 +2,7 @@ import { desc, eq } from "drizzle-orm";
 
 import { PasskeyButton, SignOutButton } from "@/components/account-tools";
 import { PageHeader } from "@/components/ui/page-header";
+import { PASSKEY_SECURITY_COPY } from "@/lib/passkey-support";
 import { getDatabase } from "@/lib/db";
 import { auditEvents } from "@/lib/db/schema";
 import { formatZonedDateTime } from "@/lib/format";
@@ -31,6 +32,7 @@ export default async function SecurityPage() {
   return (
     <>
       <PageHeader title="Security" />
+      <p>{PASSKEY_SECURITY_COPY}</p>
       <PasskeyButton />
       <SignOutButton />
       <h2>Recent activity</h2>
