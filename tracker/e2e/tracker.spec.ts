@@ -157,6 +157,7 @@ async function expectAccessible(page: Page, name: string) {
 test("sign in, log a workout, level up, and publish a profile", async ({ page, request, browser }) => {
   await page.goto("/sign-in");
   await expect(page.getByRole("heading", { name: "Calisthenics Tracker" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Sign in with a passkey" })).toBeVisible();
   await expectFits(page, "sign-in");
   await page.screenshot({ path: "/opt/cursor/artifacts/sign-in.png", fullPage: true });
   await expectAccessible(page, "sign-in");
@@ -309,6 +310,12 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
     await page.goto(path);
     await expectFits(page, path);
   }
+  await page.goto("/settings/security");
+  await expect(page.getByRole("heading", { name: "Security" })).toBeVisible();
+  await expect(page.getByText("A passkey signs you in on this device without a password.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Add a passkey" })).toBeVisible();
+  await expect(page.getByText(/chrome|firefox|safari|edge|samsung/i)).toHaveCount(0);
+  await page.screenshot({ path: "/opt/cursor/artifacts/passkey-security.png", fullPage: true });
   await page.goto("/settings/suggestions");
   await expect(page.getByRole("heading", { name: "Suggestions" })).toBeVisible();
   await page.getByRole("radio", { name: "Idea" }).check();

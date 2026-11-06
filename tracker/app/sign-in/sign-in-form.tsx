@@ -6,6 +6,8 @@ import { flushSync } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { NEUTRAL_AUTH_MESSAGE } from "@/lib/auth-policy";
 import { authClient } from "@/lib/auth-client";
+import { PASSKEY_SIGN_IN_FAILED_MESSAGE, PASSKEY_UNAVAILABLE_MESSAGE } from "@/lib/passkey-support";
+import { usePasskeySupport } from "@/lib/use-passkey-support";
 
 export function SignInForm() {
   const [email, setEmail] = useState("");
@@ -13,6 +15,7 @@ export function SignInForm() {
   const [passkeyPending, setPasskeyPending] = useState(false);
   const [notice, setNotice] = useState("");
   const [passkeyNote, setPasskeyNote] = useState("");
+  const support = usePasskeySupport();
   const noticeRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
@@ -45,7 +48,7 @@ export function SignInForm() {
     const result = await authClient.signIn.passkey().catch(() => ({ error: { message: "failed" } }));
     setPasskeyPending(false);
     if (result && "error" in result && result.error) {
-      setPasskeyNote("That didn't work. Try the email link instead.");
+      setPasskeyNote(PASSKEY_SIGN_IN_FAILED_MESSAGE);
     }
   }
 
@@ -75,13 +78,18 @@ export function SignInForm() {
           {notice}
         </p>
       ) : null}
-      <p className="or">
-        <span>or</span>
-      </p>
-      <Button variant="secondary" type="button" pending={passkeyPending} disabled={pending} pendingLabel="Please wait…" onClick={onPasskey}>
-        Sign in with a passkey
-      </Button>
-      {passkeyNote ? <p role="status">{passkeyNote}</p> : null}
+      {support?.offer ? (
+        <>
+          <p className="or">
+            <span>or</span>
+          </p>
+          <Button variant="secondary" type="button" pending={passkeyPending} disabled={pending} pendingLabel="Please wait…" onClick={onPasskey}>
+            Sign in with a passkey
+          </Button>
+          {passkeyNote ? <p role="status">{passkeyNote}</p> : null}
+        </>
+      ) : null}
+      {support && !support.offer ? <p role="status">{PASSKEY_UNAVAILABLE_MESSAGE}</p> : null}
       <p>
         <a href="/privacy">Privacy</a>
       </p>
