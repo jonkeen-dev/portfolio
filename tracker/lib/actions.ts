@@ -23,7 +23,15 @@ import { sendAppEmail } from "@/lib/email";
 import { inviteMessage, storeMagicLink } from "@/lib/invite-link";
 import { env, isAllowedEmail } from "@/lib/env";
 import { normalizeHandle, validHandle } from "@/lib/handles";
+import { rateLimit } from "@/lib/rate-limit";
 import { currentProfile, currentSession, userRole } from "@/lib/session";
+import {
+  createSuggestion,
+  markSuggestionDone,
+  notifySuggestion,
+  suggestionsFrom,
+  suggestionsNotifyEmail,
+} from "@/lib/suggestions";
 import { readWorkoutPrefs } from "@/lib/workout-prefs";
 import { isIsoDate } from "@/lib/validators";
 
@@ -392,6 +400,37 @@ export async function revokeInvite(formData: FormData) {
     .set({ revokedAt: new Date() })
     .where(and(eq(invites.id, id), eq(invites.invitedBy, session.user.id), isNull(invites.acceptedAt)));
   redirect("/settings/people");
+}
+
+export async function submitSuggestion(formData: FormData) {
+  const session = await currentSession();
+  if (!session) redirect("/sign-in");
+  const burst = rateLimit(`suggestion:${session.user.id}`, 5, 60 * 60 * 1000);
+  const result = await createSuggestion(getDatabase().db, {
+    userId: session.user.id,
+    type: String(formData.get("type") ?? ""),
+    message: String(formData.get("message") ?? ""),
+    rateOk: burst.ok,
+  });
+  if (!result.ok) {
+    if (result.reason === "signed-out") redirect("/sign-in");
+    redirect(`/settings/suggestions?error=${encodeURIComponent(result.error)}`);
+  }
+  await notifySuggestion({
+    id: result.id,
+    type: result.type,
+    message: result.message,
+    to: suggestionsNotifyEmail(),
+    from: suggestionsFrom(env().EMAIL_FROM),
+  });
+  redirect("/settings/suggestions?sent=1");
+}
+
+export async function completeSuggestion(formData: FormData) {
+  const session = await currentSession();
+  if (!session) redirect("/sign-in");
+  await markSuggestionDone(getDatabase().db, userRole(session.user), String(formData.get("id") ?? ""));
+  redirect("/settings/suggestions");
 }
 
 export async function deleteAccount(

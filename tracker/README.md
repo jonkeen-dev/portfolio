@@ -65,7 +65,7 @@ Kettlebell equipment, public signup, the onboarding quiz, a full offline sync wo
 6. Add the domain `tracker.jonkeen.dev` on that Vercel project and finish HTTPS there. Use that host for `BETTER_AUTH_URL`. WebAuthn will not work on a `vercel.app` host once the relying party id is `tracker.jonkeen.dev`.
 7. In Cloudflare DNS for `jonkeen.dev`, add a `CNAME` named `tracker` to the target Vercel shows for the domain. Leave the cloud grey (DNS only) so Vercel can issue the certificate. The app sends HSTS with `includeSubDomains` only when `BETTER_AUTH_URL` is https. That header is on the tracker response, not a replacement for any portfolio HSTS policy.
 8. Resend DNS, also in Cloudflare. If Proton already has MX, SPF, and DKIM on the root domain, send from a subdomain instead (`auth@mail.jonkeen.dev`, with Resend's return-path on its sending host). Otherwise add the records Resend shows: one SPF TXT that includes both Proton and Resend if you must share the root, Resend's DKIM next to Proton's, and a single `_dmarc.jonkeen.dev`. Copy the records from Resend's current Records tab (newer domains may be CNAMEs). Turn off open and click tracking. Set `EMAIL_REPLY_TO` only if someone should actually receive replies.
-9. From a machine that has the production `DATABASE_URL`, run `npm run db:setup` once in `tracker/` before the first invite. That applies migrations and seeds the program.
+9. From a machine that has the production `DATABASE_URL`, run `npm run db:setup` once in `tracker/` before the first invite. That applies migrations and seeds the program. After this suggestions change is deployed, run `npm run db:migrate` in `tracker/` again so `drizzle/0001_suggestions.sql` creates the suggestions table. Seeding again is unnecessary.
 10. Production env:
     - `DATABASE_URL` Neon pooled string
     - `BETTER_AUTH_SECRET` long random
@@ -80,6 +80,7 @@ Kettlebell equipment, public signup, the onboarding quiz, a full offline sync wo
     - `ALLOWED_EMAILS` comma-separated, owner first or set `OWNER_EMAIL`
     - `OWNER_EMAIL`
     - `MAX_USERS=2`
+    - `SUGGESTIONS_NOTIFY_EMAIL` inbox that should receive suggestion notices. Leave unset to save suggestions without email. Notices are sent through Resend from the mailbox name in `EMAIL_FROM` on `mail.jonkeen.dev`, so that domain needs to be verified.
     - Do not set `ALLOW_DEV_MAILBOX`, `EMAIL_TRANSPORT=dev`, or `RATE_LIMIT_DISABLED`
-11. Redeploy after the env is saved. Sign in as the owner, add a passkey on Android Chrome, install the app, then send the partner invite from Settings. Confirm `/u/your-handle` sends `noindex` until you turn indexing on.
+11. Redeploy after the env is saved. Sign in as the owner, add a passkey in any browser that supports WebAuthn, install the app, then send the partner invite from Settings. Confirm `/u/your-handle` sends `noindex` until you turn indexing on.
 12. Optional later: a non-owner database role so the RLS policies apply, and a link from the portfolio to `https://tracker.jonkeen.dev`. Neon free-tier point-in-time recovery is short. Nightly dumps are not built.

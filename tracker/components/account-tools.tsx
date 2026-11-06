@@ -5,6 +5,8 @@ import { useState, useSyncExternalStore } from "react";
 
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { PASSKEY_UNAVAILABLE_MESSAGE } from "@/lib/passkey-support";
+import { usePasskeySupport } from "@/lib/use-passkey-support";
 
 export function ThemeChooser() {
   const { theme, setTheme } = useTheme();
@@ -42,27 +44,33 @@ export function ThemeChooser() {
 }
 
 export function PasskeyButton() {
+  const support = usePasskeySupport();
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
   return (
     <div className="stack">
-      <Button
-        type="button"
-        pending={pending}
-        pendingLabel="Saving…"
-        onClick={async () => {
-          setPending(true);
-          const result = await authClient.passkey.addPasskey({ name: "This phone" }).catch(() => ({ error: { message: "no" } }));
-          setPending(false);
-          if (result && "error" in result && result.error) {
-            setMessage("Passkey was not saved. Try again on Android Chrome, or keep using email links.");
-            return;
-          }
-          setMessage("Passkey saved on this device.");
-        }}
-      >
-        Add a passkey
-      </Button>
+      {support?.offer ? (
+        <Button
+          type="button"
+          pending={pending}
+          pendingLabel="Saving…"
+          onClick={async () => {
+            setPending(true);
+            const result = await authClient.passkey
+              .addPasskey({ name: "This phone" })
+              .catch(() => ({ error: { message: "no" } }));
+            setPending(false);
+            if (result && "error" in result && result.error) {
+              setMessage(support.registrationFailureMessage);
+              return;
+            }
+            setMessage("Passkey saved on this device.");
+          }}
+        >
+          Add a passkey
+        </Button>
+      ) : null}
+      {support && !support.offer ? <p role="status">{PASSKEY_UNAVAILABLE_MESSAGE}</p> : null}
       {message ? <p role="status">{message}</p> : null}
     </div>
   );

@@ -40,7 +40,10 @@ export async function sendAppEmail(input: {
   subject: string;
   text: string;
   url?: string | null;
-}): Promise<void> {
+  from?: string;
+  idempotencyKey?: string;
+  category?: string;
+}): Promise<{ ok: boolean }> {
   const message: OutboundMail = {
     to: input.to,
     subject: input.subject,
@@ -49,21 +52,23 @@ export async function sendAppEmail(input: {
     at: new Date().toISOString(),
   };
   if (env().EMAIL_TRANSPORT !== "resend") {
-    if (!devMailboxEnabled()) {
-      console.info(`[email:dev] ${message.subject} → ${message.to}`);
-    }
+    if (!devMailboxEnabled()) console.info(`[email:dev] ${message.subject}`);
     writeDevMail(message);
-    return;
+    return { ok: true };
   }
   const key = env().RESEND_API_KEY;
   if (!key) throw new Error("RESEND_API_KEY is required when EMAIL_TRANSPORT=resend");
   const resend = new Resend(key);
-  await resend.emails.send({
-    from: env().EMAIL_FROM,
-    to: input.to,
-    subject: input.subject,
-    text: input.text,
-    replyTo: env().EMAIL_REPLY_TO,
-    tags: [{ name: "category", value: "auth" }],
-  });
+  const { error } = await resend.emails.send(
+    {
+      from: input.from ?? env().EMAIL_FROM,
+      to: input.to,
+      subject: input.subject,
+      text: input.text,
+      replyTo: env().EMAIL_REPLY_TO,
+      tags: [{ name: "category", value: input.category ?? "auth" }],
+    },
+    input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : undefined,
+  );
+  return { ok: !error };
 }

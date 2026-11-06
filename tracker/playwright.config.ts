@@ -14,6 +14,7 @@ const env = {
   BETTER_AUTH_SECRET: "e2e-secret-at-least-32-characters",
   WEBAUTHN_RP_ID: "localhost",
   WEBAUTHN_RP_NAME: "Calisthenics Tracker",
+  SUGGESTIONS_NOTIFY_EMAIL: "suggestions-notify@example.com",
 };
 
 export default defineConfig({

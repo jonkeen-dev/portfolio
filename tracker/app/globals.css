@@ -102,7 +102,7 @@
 html {
   font-size: 100%;
   scroll-padding-top: 16px;
-  scroll-padding-bottom: calc(var(--nav-offset) + var(--rest-dock, 0px) + var(--finish-dock, 0px) + 16px);
+  scroll-padding-bottom: calc(var(--nav-offset) + var(--rest-dock, 0px) + var(--finish-dock, 0px) + 24px);
 }
 
 body {
@@ -149,7 +149,7 @@ body {
 }
 
 .page-with-nav {
-  padding-bottom: calc(var(--nav-offset) + var(--rest-dock, 0px) + var(--finish-dock, 0px) + 16px);
+  padding-bottom: calc(var(--nav-offset) + var(--rest-dock, 0px) + var(--finish-dock, 0px) + 24px);
 }
 
 .page > * + * {
@@ -320,6 +320,30 @@ textarea {
   padding: 8px 12px;
   width: 100%;
   max-width: 100%;
+}
+
+textarea.suggestion-box {
+  min-height: 8rem;
+  resize: vertical;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
+.suggestion-card {
+  min-width: 0;
+}
+
+.suggestion-copy {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
+.suggestion-card form .btn {
+  width: 100%;
 }
 
 .choice {
@@ -795,6 +819,11 @@ details:not([open]) > :not(summary) {
 
 .exercise-row.is-current {
   border: 2px solid var(--accent);
+}
+
+.exercise-row,
+.exercise-row :is(a, button, input, select, textarea, summary) {
+  scroll-margin-bottom: calc(72px + env(safe-area-inset-bottom) + var(--finish-dock, 0px) + var(--rest-dock, 0px) + 24px);
 }
 
 .exercise-row:active {

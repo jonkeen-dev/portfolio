@@ -16,6 +16,10 @@ const schema = z.object({
   RESEND_API_KEY: z.string().optional(),
   ALLOWED_EMAILS: z.string().default(""),
   OWNER_EMAIL: z.string().optional(),
+  SUGGESTIONS_NOTIFY_EMAIL: z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.string().optional(),
+  ),
   MAX_USERS: z.coerce.number().int().positive().default(2),
   ALLOW_DEV_MAILBOX: z.string().optional(),
   RATE_LIMIT_DISABLED: z.string().optional(),
