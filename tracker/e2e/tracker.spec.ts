@@ -304,10 +304,32 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
   await page.screenshot({ path: "/opt/cursor/artifacts/phase4-settings.png" });
   await expectFits(page, "settings");
   await expectAccessible(page, "settings");
-  for (const path of ["/settings/profile", "/settings/workout", "/settings/people", "/settings/security", "/settings/data", "/settings/appearance"]) {
+  await expect(page.getByRole("link", { name: /Suggestions/ })).toBeVisible();
+  for (const path of ["/settings/profile", "/settings/workout", "/settings/people", "/settings/security", "/settings/suggestions", "/settings/data", "/settings/appearance"]) {
     await page.goto(path);
     await expectFits(page, path);
   }
+  await page.goto("/settings/suggestions");
+  await expect(page.getByRole("heading", { name: "Suggestions" })).toBeVisible();
+  await page.getByRole("radio", { name: "Idea" }).check();
+  await page.getByLabel("Message").fill("A quieter rest timer would help.");
+  await page.getByRole("button", { name: "Send suggestion" }).click();
+  await expect(page.getByText("Thanks. Your suggestion was saved.")).toBeVisible();
+  await expect(page.getByText("A quieter rest timer would help.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Mark done" })).toBeVisible();
+  await expectFits(page, "suggestions");
+  await page.screenshot({ path: "/opt/cursor/artifacts/suggestions.png" });
+  await page.getByRole("button", { name: "Mark done" }).scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "/opt/cursor/artifacts/suggestions-received.png" });
+  await expectAccessible(page, "suggestions");
+  const suggestionMail = await request.get("/api/dev/mailbox");
+  const suggestionBody = (await suggestionMail.json()) as { messages: Array<{ subject: string; text: string }> };
+  const suggestionNote = suggestionBody.messages.find((item) => item.subject === "Suggestion: Idea");
+  expect(suggestionNote?.text).toContain("A quieter rest timer would help.");
+  expect(suggestionNote?.text ?? "").not.toContain("@");
+  await page.getByRole("button", { name: "Mark done" }).click();
+  await expect(page.getByText("Done", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Mark done" })).toHaveCount(0);
   await page.goto("/settings/appearance");
   await expect(page.getByRole("radio", { name: "Match this device" })).toBeChecked();
   await expect(page.getByText("Dark")).toBeVisible();
@@ -463,6 +485,15 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
   await partnerPage.screenshot({ path: "/opt/cursor/artifacts/phase4-partner.png" });
   await expectAccessible(partnerPage, "partner joined");
 
+  await partnerPage.goto("/settings/suggestions");
+  await expect(partnerPage.getByRole("heading", { name: "Suggestions" })).toBeVisible();
+  await expect(partnerPage.getByLabel("Message")).toBeVisible();
+  await expect(partnerPage.getByRole("heading", { name: "Received" })).toHaveCount(0);
+  await expect(partnerPage.getByText("A quieter rest timer would help.")).toHaveCount(0);
+  await expect(partnerPage.getByRole("button", { name: "Mark done" })).toHaveCount(0);
+  await expectFits(partnerPage, "partner suggestions");
+  await partnerPage.screenshot({ path: "/opt/cursor/artifacts/suggestions-partner.png" });
+
   await partnerPage.goto("/settings/data");
   await partnerPage.getByRole("button", { name: "Delete account" }).click();
   const sheet = partnerPage.getByRole("dialog");
@@ -481,6 +512,8 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
   await expectFits(page, "404");
 
   await page.context().clearCookies();
+  await page.goto("/settings/suggestions");
+  await expect(page).toHaveURL(/\/sign-in/);
   await page.goto("/today");
   await expect(page).toHaveURL(/\/sign-in/);
 });
