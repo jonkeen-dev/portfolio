@@ -367,6 +367,17 @@ export const shares = pgTable("shares", {
   revokedAt: ts("revoked_at"),
 });
 
+export const suggestions = pgTable("suggestions", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  type: text("type").notNull(),
+  message: text("message").notNull(),
+  createdAt: ts("created_at").notNull().defaultNow(),
+  status: text("status").notNull().default("new"),
+});
+
 export const auditEvents = pgTable("audit_events", {
   id: text("id").primaryKey(),
   userId: text("user_id").references(() => user.id, { onDelete: "set null" }),

@@ -322,6 +322,30 @@ textarea {
   max-width: 100%;
 }
 
+textarea.suggestion-box {
+  min-height: 8rem;
+  resize: vertical;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
+.suggestion-card {
+  min-width: 0;
+}
+
+.suggestion-copy {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
+.suggestion-card form .btn {
+  width: 100%;
+}
+
 .choice {
   grid-template-columns: auto 1fr;
   align-items: center;

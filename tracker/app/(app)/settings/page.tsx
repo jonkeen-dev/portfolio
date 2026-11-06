@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/settings/people", label: "People", detail: "Invite one training partner", owner: true },
   { href: "/settings/appearance", label: "Look and accessibility", detail: "Theme and motion" },
   { href: "/settings/security", label: "Security", detail: "Passkey, sign out, and recent activity" },
+  { href: "/settings/suggestions", label: "Suggestions", detail: "Feedback, ideas, and improvements" },
   { href: "/settings/data", label: "Your data", detail: "Download or delete your account" },
 ];
 
