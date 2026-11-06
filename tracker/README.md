@@ -81,5 +81,5 @@ Kettlebell equipment, public signup, the onboarding quiz, a full offline sync wo
     - `OWNER_EMAIL`
     - `MAX_USERS=2`
     - Do not set `ALLOW_DEV_MAILBOX`, `EMAIL_TRANSPORT=dev`, or `RATE_LIMIT_DISABLED`
-11. Redeploy after the env is saved. Sign in as the owner, add a passkey on Android Chrome, install the app, then send the partner invite from Settings. Confirm `/u/your-handle` sends `noindex` until you turn indexing on.
+11. Redeploy after the env is saved. Sign in as the owner, add a passkey in any browser that supports WebAuthn, install the app, then send the partner invite from Settings. Confirm `/u/your-handle` sends `noindex` until you turn indexing on.
 12. Optional later: a non-owner database role so the RLS policies apply, and a link from the portfolio to `https://tracker.jonkeen.dev`. Neon free-tier point-in-time recovery is short. Nightly dumps are not built.
