@@ -162,6 +162,10 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
   await page.screenshot({ path: "/opt/cursor/artifacts/sign-in.png", fullPage: true });
   await expectAccessible(page, "sign-in");
 
+  const beforeMail = await request.get("/api/dev/mailbox");
+  const beforeMailBody = (await beforeMail.json()) as { messages: Array<{ to: string; url: string | null }> };
+  const previousOwnerLinks = beforeMailBody.messages.filter((message) => message.to === "owner@example.com" && message.url)
+    .length;
   await page.getByLabel("Email").fill("owner@example.com");
   await page.getByRole("button", { name: "Email me a sign-in link" }).click();
   await expect(
@@ -175,7 +179,8 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
     .poll(async () => {
       const response = await request.get("/api/dev/mailbox");
       const body = (await response.json()) as { messages: Array<{ to: string; url: string | null }> };
-      link = body.messages.find((message) => message.to === "owner@example.com" && message.url)?.url ?? "";
+      const links = body.messages.filter((message) => message.to === "owner@example.com" && message.url);
+      link = links.length > previousOwnerLinks ? (links.at(-1)?.url ?? "") : "";
       return link;
     })
     .not.toBe("");
@@ -198,7 +203,7 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
 
   const prior = await page.request.post("/api/dev/prior-session", {
     data: { date: "2026-10-23", exerciseId: "SQ1", sets: [12, 12] },
-    headers: { origin: "http://127.0.0.1:3100" },
+    headers: { origin: "http://localhost:3100" },
   });
   expect(prior.ok(), await prior.text()).toBeTruthy();
 
@@ -385,7 +390,7 @@ test("sign in, log a workout, level up, and publish a profile", async ({ page, r
 
   const denied = await request.post("/api/sets", {
     data: { date: "2026-10-26" },
-    headers: { origin: "http://127.0.0.1:3100" },
+    headers: { origin: "http://localhost:3100" },
   });
   expect(denied.status()).toBe(401);
 
