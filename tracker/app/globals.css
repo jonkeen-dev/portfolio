@@ -233,6 +233,12 @@ ol {
   font-weight: 500;
 }
 
+.passkey-code {
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
 .row-title {
   font-size: 1.0625rem;
   line-height: 1.3;
