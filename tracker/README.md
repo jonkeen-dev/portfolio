@@ -30,7 +30,7 @@ npm run build
 npm run e2e
 ```
 
-`npm run e2e` builds nothing by itself. Run `npm run build` first. Playwright then resets `.data/e2e`, seeds the reference program, and starts `next start` on `127.0.0.1:3000` with the dev mailbox enabled.
+`npm run e2e` builds nothing by itself. Run `npm run build` first. Playwright then resets `.data/e2e`, seeds the reference program, and starts `next start` on `localhost:3100` with the dev mailbox enabled. The host is `localhost` so the passkey relying party id matches the page.
 
 ## Data
 

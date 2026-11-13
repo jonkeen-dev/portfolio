@@ -2,6 +2,7 @@ import { desc, eq } from "drizzle-orm";
 
 import { PasskeyButton, SignOutButton } from "@/components/account-tools";
 import { PageHeader } from "@/components/ui/page-header";
+import { sessionCreatedAtIsFresh } from "@/lib/passkey-errors";
 import { PASSKEY_SECURITY_COPY } from "@/lib/passkey-support";
 import { getDatabase } from "@/lib/db";
 import { auditEvents } from "@/lib/db/schema";
@@ -33,7 +34,7 @@ export default async function SecurityPage() {
     <>
       <PageHeader title="Security" />
       <p>{PASSKEY_SECURITY_COPY}</p>
-      <PasskeyButton />
+      <PasskeyButton sessionFresh={sessionCreatedAtIsFresh(session.session.createdAt)} />
       <SignOutButton />
       <h2>Recent activity</h2>
       <ul className="plain-list">

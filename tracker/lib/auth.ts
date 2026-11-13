@@ -56,6 +56,8 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 30,
     updateAge: 60 * 60 * 24,
+    // freshAge stays at Better Auth's default: 24 hours from session.createdAt.
+    // Passkey registration requires that fresh session. Do not set freshAge to 0.
     cookieCache: { enabled: false },
   },
   advanced: {
